@@ -1,6 +1,20 @@
-module "network" {
-  source = "./modules/network"
+module "vpc" {
+  source = "./modules/vpc"
 }
+
+module "security_group" {
+  source              = "./modules/security_group"
+  vpc_id              = module.vpc.vpc_id
+  allowed_ingress_ports = [80, 443]
+  allowed_cidr_blocks  = ["0.0.0.0/0"]
+}
+
+module "s3" {
+  source = "./modules/s3"
+
+  Owner = var.Owner
+}
+
 
 # module "iam" {
 #   source                = "./modules/iam"
@@ -26,11 +40,6 @@ module "network" {
 #   iam_instance_profile    = module.iam.instance_profile_name
 # }
 
-module "storage" {
-  source = "./modules/storage"
-
-  Owner = var.Owner
-}
 
 # output "instances_info" {
 #   description = "Information about public instances"
@@ -46,3 +55,4 @@ module "storage" {
 #     description = "Public URL of the image stored in S3"
 #     value       = module.storage.s3_image_url
 # }
+
