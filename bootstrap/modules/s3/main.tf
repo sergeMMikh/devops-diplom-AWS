@@ -27,14 +27,14 @@ resource "aws_s3_bucket_public_access_block" "backend_dd_block" {
 }
 
 
-resource "aws_s3_object" "image" {
-  bucket                 = aws_s3_bucket.backend_dd.id
-  key                    = "cafe.jpg"
-  source                 = "images/cafe.jpg"
-  server_side_encryption = "AES256"
+# resource "aws_s3_object" "image" {
+#   bucket                 = aws_s3_bucket.backend_dd.id
+#   key                    = "cafe.jpg"
+#   source                 = "images/cafe.jpg"
+#   server_side_encryption = "AES256"
 
-  depends_on = [aws_s3_bucket.backend_dd]
-}
+#   depends_on = [aws_s3_bucket.backend_dd]
+# }
 
 # Политика доступа для публичного чтения ... пока не нужна
 # resource "aws_s3_bucket_policy" "backend_dd_policy" {
