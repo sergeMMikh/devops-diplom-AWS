@@ -3,26 +3,14 @@ module "vpc" {
 }
 
 module "security_group" {
-  source              = "./modules/security_group"
-  vpc_id              = module.vpc.vpc_id
+  source                = "./modules/security_group"
+  vpc_id                = module.vpc.vpc_id
   allowed_ingress_ports = [80, 443]
-  allowed_cidr_blocks  = ["0.0.0.0/0"]
-}
-
-module "s3" {
-  source = "./modules/s3"
-
-  Owner = var.Owner
+  allowed_cidr_blocks   = ["0.0.0.0/0"]
 }
 
 
-# module "iam" {
-#   source                = "./modules/iam"
-#   role_name             = "ec2-s3-access-role"
-#   policy_name           = "ec2-s3-write-policy"
-#   s3_bucket_arn         = "arn:aws:s3:::hw-smmikh-january-2025-store-bucket"
-#   instance_profile_name = "ec2-instance-profile"
-# }
+
 
 # module "instances" {
 #   source = "./modules/instances"
