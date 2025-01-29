@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "backend_dd" {
-  bucket = "hw-smmikh-january-2025-store-bucket"
+  bucket = "smmikh-dev-dip-2025-store-bucket"
 
   tags = {
     Name = "BackendStorageBucket"
