@@ -32,93 +32,93 @@ resource "aws_launch_configuration" "web_server_lc" {
   }
 }
 
-resource "aws_autoscaling_group" "web_asg" {
-  launch_configuration = aws_launch_configuration.web_server_lc.id
-  min_size             = 3
-  max_size             = 3
-  desired_capacity     = 3
-  vpc_zone_identifier  = var.private_subnet_id
+# resource "aws_autoscaling_group" "web_asg" {
+#   launch_configuration = aws_launch_configuration.web_server_lc.id
+#   min_size             = 3
+#   max_size             = 3
+#   desired_capacity     = 3
+#   vpc_zone_identifier  = var.private_subnet_id
 
-  health_check_grace_period = 300
-  health_check_type         = "EC2"
+#   health_check_grace_period = 300
+#   health_check_type         = "EC2"
 
-  target_group_arns = [aws_lb_target_group.web_target_group.arn]
+#   target_group_arns = [aws_lb_target_group.web_target_group.arn]
 
-  lifecycle {
-    create_before_destroy = true
-  }
-}
+#   lifecycle {
+#     create_before_destroy = true
+#   }
+# }
 
-resource "aws_lb" "web_alb" {
-  name               = "web-load-balancer"
-  internal           = false
-  load_balancer_type = "application"
-  security_groups    = [var.security_group_id]
-  subnets            = var.public_subnets_id
+# resource "aws_lb" "web_alb" {
+#   name               = "web-load-balancer"
+#   internal           = false
+#   load_balancer_type = "application"
+#   security_groups    = [var.security_group_id]
+#   subnets            = var.public_subnets_id
 
-  enable_deletion_protection = false
+#   enable_deletion_protection = false
 
-  tags = {
-    Name = "WebALB"
-  }
-}
+#   tags = {
+#     Name = "WebALB"
+#   }
+# }
 
-resource "aws_lb_target_group" "web_target_group" {
-  name        = "web-target-group"
-  port        = 80
-  protocol    = "HTTP"
-  vpc_id      = var.vpc_id
-  target_type = "instance"
+# resource "aws_lb_target_group" "web_target_group" {
+#   name        = "web-target-group"
+#   port        = 80
+#   protocol    = "HTTP"
+#   vpc_id      = var.vpc_id
+#   target_type = "instance"
 
-  health_check {
-    path                = "/index.html" # Проверка по конкретному файлу
-    interval            = 60            # Увеличиваем интервал проверки
-    timeout             = 10            # Увеличиваем таймаут
-    healthy_threshold   = 2             # Быстрее становится Healthy
-    unhealthy_threshold = 5             # Медленнее становится Unhealthy
-    matcher             = "200"
-  }
-}
-
-
-resource "aws_acm_certificate" "web_certificate" {
-  domain_name       = "hw.crystalpuzzles.pt"
-  validation_method = "DNS"
-
-  tags = {
-    Name = "WebCertificate"
-  }
-}
+#   health_check {
+#     path                = "/index.html" # Проверка по конкретному файлу
+#     interval            = 60            # Увеличиваем интервал проверки
+#     timeout             = 10            # Увеличиваем таймаут
+#     healthy_threshold   = 2             # Быстрее становится Healthy
+#     unhealthy_threshold = 5             # Медленнее становится Unhealthy
+#     matcher             = "200"
+#   }
+# }
 
 
-# HTTP Listener для перенаправления на HTTPS
-resource "aws_lb_listener" "http_listener" {
-  load_balancer_arn = aws_lb.web_alb.arn
-  port              = 80
-  protocol          = "HTTP"
+# resource "aws_acm_certificate" "web_certificate" {
+#   domain_name       = "hw.crystalpuzzles.pt"
+#   validation_method = "DNS"
 
-  default_action {
-    type = "redirect"
+#   tags = {
+#     Name = "WebCertificate"
+#   }
+# }
 
-    redirect {
-      port        = "443"
-      protocol    = "HTTPS"
-      status_code = "HTTP_301"
-    }
-  }
-}
 
-# HTTPS Listener с сертификатом
-resource "aws_lb_listener" "https_listener" {
-  load_balancer_arn = aws_lb.web_alb.arn
-  port              = 443
-  protocol          = "HTTPS"
+# # HTTP Listener для перенаправления на HTTPS
+# resource "aws_lb_listener" "http_listener" {
+#   load_balancer_arn = aws_lb.web_alb.arn
+#   port              = 80
+#   protocol          = "HTTP"
 
-  ssl_policy      = "ELBSecurityPolicy-2016-08"
-  certificate_arn = aws_acm_certificate.web_certificate.arn
+#   default_action {
+#     type = "redirect"
 
-  default_action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.web_target_group.arn
-  }
-}
+#     redirect {
+#       port        = "443"
+#       protocol    = "HTTPS"
+#       status_code = "HTTP_301"
+#     }
+#   }
+# }
+
+# # HTTPS Listener с сертификатом
+# resource "aws_lb_listener" "https_listener" {
+#   load_balancer_arn = aws_lb.web_alb.arn
+#   port              = 443
+#   protocol          = "HTTPS"
+
+#   ssl_policy      = "ELBSecurityPolicy-2016-08"
+#   certificate_arn = aws_acm_certificate.web_certificate.arn
+
+#   default_action {
+#     type             = "forward"
+#     target_group_arn = aws_lb_target_group.web_target_group.arn
+#   }
+# }
