@@ -53,7 +53,22 @@
 ---
 **Решение**
 
+Согласно требованию декомпозиции проекта создал деректории:
+- [bootstrap](terraform/bootstrap) для размещения ключевых ресурсов, без которых не сможет работать остальная инфраструктура и которые должны разворачиваться в первую очередь. После выполнения bootstrap может больше не изменяться (или меняться очень редко): 
+   - [iam](terraform/bootstrap/modules/iam/)- модуль для натсройки сервисной роли 
+   - [s3](terraform/bootstrap/modules/s3/)- модуль настройки базового backend хранилища. 
+ 
+- [infrastructure](terraform/infrastructure) для размещения остальных модулей:
+   - [ec2](terraform/infrastructure/modules/ec2/)- модуль инстансов
+   - [vpc](terraform/infrastructure/modules/vpc/)- сети
+   - [sequrity_group](terraform/infrastructure/modules/security_group/)- настройка сетевого взаимодеёствия инстансов.
 
+При помощи записи *backend "s3"* в файле [backend.tf](terraform/infrastructure/backend.tf) настроил сохранение *terraform.tfstate* в s3 bucket.</br>
+![Запись terraform.tfstate в s3 bucket](images/Task_1_1.png)
+
+Сргоасно 6-му пункту заданияиспользуя web-интерфейс AWS убедился что все изменения `terraform destroy` и `terraform apply` проходят успешно.
+</br>
+![Запись terraform.tfstate в s3 bucket](images/Task_1_1.png)
 
 ---
 ### Создание Kubernetes кластера

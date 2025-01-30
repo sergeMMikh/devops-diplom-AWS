@@ -12,7 +12,12 @@ resource "aws_iam_role" "ec2_s3_access" {
         Effect = "Allow",
         Principal = {
           # кто имеет право использовать эту роль
-          Service = "ec2.amazonaws.com"
+          Service = [
+            "ec2.amazonaws.com",
+            "s3.amazonaws.com",
+            "logs.amazonaws.com",
+            "apigateway.amazonaws.com"
+          ]
         }
       }
     ]
@@ -29,7 +34,7 @@ resource "aws_iam_policy" "s3_write_policy" {
       {
         Effect = "Allow",
         Action = [
-           "s3:ListBucket",
+          "s3:ListBucket",
           "s3:GetObject",
           "s3:PutObject",
           "s3:DeleteObject",

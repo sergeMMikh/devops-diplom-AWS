@@ -22,11 +22,11 @@ variable "key_name" {
   sensitive   = true
 }
 
-variable "vm_public_instance_type" {
-  type        = string
-  description = "The type of instance"
-  default     = "t2.micro"
-}
+# variable "vm_public_instance_type" {
+#   type        = string
+#   description = "The type of instance"
+#   default     = "t2.micro"
+# }
 
 variable "Owner" {
   type        = string
@@ -40,8 +40,14 @@ variable "Project" {
   default     = "hw_cloud_providers_networking"
 }
 
-variable "Platform" {
-  type        = string
-  description = "The instance platform"
-  default     = "Ubuntu"
-}
+# variable "Platform" {
+#   type        = string
+#   description = "The instance platform"
+#   default     = "Ubuntu"
+# }
+
+# variable "s3_bucket_name" {
+#   description = "Имя S3 бакета для хранения state-файла"
+#   type        = string
+# }
+
