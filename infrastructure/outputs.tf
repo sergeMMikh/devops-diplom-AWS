@@ -77,3 +77,14 @@ output "security_group_id" {
   description = "ID созданной Security Group"
   value       = module.security_group.security_group_id
 }
+
+
+output "k8s_instance_ids" {
+  description = "IDs of Kubernetes EC2 instances"
+  value       = module.k8s_ec2.instance_ids
+}
+
+output "k8s_instance_public_ips" {
+  description = "Public IPs of Kubernetes EC2 instances"
+  value       = module.k8s_ec2.public_ips
+}

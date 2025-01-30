@@ -12,18 +12,31 @@ module "security_group" {
 module "ec2" {
   source = "./modules/ec2"
 
+  # Тип инстанса
   vm_public_instance_type = var.vm_public_instance_type
-  key_name                = var.key_name
-  Owner                   = var.Owner
-  Project                 = var.Project
-  Platform                = var.Platform
-  public_subnets_id       = module.network.public_subnets_id
-  private_subnet_id       = module.network.private_subnets_id
-  security_group_id       = module.network.security_group_id
-  vpc_id                  = module.network.vpc_id
-  s3_image_url            = module.storage.s3_image_url
-  iam_instance_profile    = module.iam.instance_profile_name
+
+  # Доступ по SSH
+  key_name = var.key_name
+
+  # Теги проекта
+  Owner    = var.Owner
+  Project  = var.Project
+  Platform = var.Platform
+
+  # Сеть
+  subnet_ids         = [module.network.public_subnet_a_id, module.network.public_subnet_b_id]
+  public_subnets_id  = module.network.public_subnets_id
+  private_subnet_id  = module.network.private_subnets_id
+  security_group_id  = module.network.security_group_id
+  vpc_id             = module.network.vpc_id
+
+  # Хранение
+  s3_image_url = module.storage.s3_image_url
+
+  # IAM
+  iam_instance_profile = module.iam.instance_profile_name
 }
+
 
 
 # output "instances_info" {

@@ -29,6 +29,18 @@ variable "Platform" {
   default     = "Ubuntu"
 }
 
+variable "subnet_ids" {
+  description = "List of subnet IDs where Kubernetes nodes will be deployed"
+  type        = list(string)
+}
+
+variable "vm_public_instance_type" {
+  description = "EC2 instance type for Kubernetes nodes"
+  type        = string
+  default     = "t3.medium"
+}
+
+
 variable "public_subnets_id" {
   description = "ID list of the public subnet"
   type        = list(string)

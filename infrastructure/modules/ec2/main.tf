@@ -32,6 +32,24 @@ resource "aws_launch_configuration" "web_server_lc" {
   }
 }
 
+resource "aws_instance" "k8s_nodes" {
+  count         = 3
+  ami           = data.aws_ami.ubuntu.id
+  instance_type = var.vm_public_instance_type
+  key_name      = var.key_name
+  subnet_id     = element(var.subnet_ids, count.index)
+  security_groups = [var.security_group_id]
+
+  user_data = templatefile("${path.module}/user_data.yaml.tpl", {
+    s3_image_url = var.s3_image_url
+  })
+
+  tags = {
+    Name = "k8s-node-${count.index + 1}"
+  }
+}
+
+
 # resource "aws_autoscaling_group" "web_asg" {
 #   launch_configuration = aws_launch_configuration.web_server_lc.id
 #   min_size             = 3
