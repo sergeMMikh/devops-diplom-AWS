@@ -6,7 +6,7 @@ module "s3" {
 
 module "iam" {
   source         = "./modules/iam"
-  role_name      = "ec2-s3-access-role"
+  role_name      = "dd-service-role"
   policy_name    = "ec2-s3-write-policy"
   s3_bucket_name = var.s3_bucket_name
 }

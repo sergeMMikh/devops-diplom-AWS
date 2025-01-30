@@ -1,5 +1,5 @@
 output "role_name" {
-  value = aws_iam_role.ec2_s3_access.name
+  value = aws_iam_role.dd-service-role.name
 }
 
 output "policy_arn" {

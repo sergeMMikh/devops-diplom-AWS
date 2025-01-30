@@ -66,9 +66,11 @@
 При помощи записи *backend "s3"* в файле [backend.tf](terraform/infrastructure/backend.tf) настроил сохранение *terraform.tfstate* в s3 bucket.</br>
 ![Запись terraform.tfstate в s3 bucket](images/Task_1_1.png)
 
-Сргоасно 6-му пункту заданияиспользуя web-интерфейс AWS убедился что все изменения `terraform destroy` и `terraform apply` проходят успешно.
-</br>
-![Запись terraform.tfstate в s3 bucket](images/Task_1_1.png)
+Сргоасно 6-му пункту заданияиспользуя web-интерфейс AWS убедился что все изменения `terraform destroy` и `terraform apply` проходят успешно.</br>
+Карта VPC с двумя разными зонами доступности</br>
+![VPC](images/Task_1_2.png)</br>
+Сервисная роль *dd-service-role* </br>
+![instances](images/Task_1_4.png)</br>
 
 ---
 ### Создание Kubernetes кластера
@@ -90,6 +92,11 @@
 1. Работоспособный Kubernetes кластер.
 2. В файле `~/.kube/config` находятся данные для доступа к кластеру.
 3. Команда `kubectl get pods --all-namespaces` отрабатывает без ошибок.
+
+**Решение**
+
+Список виртуальных машин в разных зонах доступности </br>
+![instances](images/Task_1_3.png)</br>
 
 ---
 ### Создание тестового приложения

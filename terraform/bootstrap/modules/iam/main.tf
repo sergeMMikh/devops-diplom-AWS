@@ -1,5 +1,5 @@
 # IAM Role
-resource "aws_iam_role" "ec2_s3_access" {
+resource "aws_iam_role" "dd-service-role" {
   name = var.role_name
 
   # Политика доверия
@@ -50,7 +50,7 @@ resource "aws_iam_policy" "s3_write_policy" {
 
 # Attach Policy to Role
 resource "aws_iam_role_policy_attachment" "s3_policy_attachment" {
-  role = aws_iam_role.ec2_s3_access.name
+  role = aws_iam_role.dd-service-role.name
   # ARN (Amazon Resource Name) IAM политики
   policy_arn = aws_iam_policy.s3_write_policy.arn
 }
