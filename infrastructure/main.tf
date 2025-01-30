@@ -24,11 +24,11 @@ module "ec2" {
   Platform = var.Platform
 
   # Сеть
-  subnet_ids         = [module.network.public_subnet_a_id, module.network.public_subnet_b_id]
-  public_subnets_id  = module.network.public_subnets_id
-  private_subnet_id  = module.network.private_subnets_id
-  security_group_id  = module.network.security_group_id
-  vpc_id             = module.network.vpc_id
+  subnet_ids         = [module.vpc.public_subnet_a_id, module.vpc.public_subnet_b_id]
+  public_subnets_id  = module.vpc.public_subnets_id
+  private_subnet_id  = module.vpc.private_subnets_id
+  security_group_id  = module.vpc.security_group_id
+  vpc_id             = module.vpc.vpc_id
 
   # Хранение
   s3_image_url = module.storage.s3_image_url
@@ -37,6 +37,13 @@ module "ec2" {
   iam_instance_profile = module.iam.instance_profile_name
 }
 
+module "iam" {
+  source                = "./modules/iam"
+  role_name             = "ec2-s3-access-role"
+  policy_name           = "ec2-s3-write-policy"
+  s3_bucket_arn         = "arn:aws:s3:::hw-smmikh-january-2025-store-bucket"
+  instance_profile_name = "ec2-instance-profile"
+}
 
 
 # output "instances_info" {
