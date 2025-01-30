@@ -11,10 +11,6 @@ variable "policy_name" {
 }
 
 
-variable "instance_profile_name" {
-  description = "Name of the IAM Instance Profile"
-  type        = string
-}
 
 
 variable "s3_bucket_name" {

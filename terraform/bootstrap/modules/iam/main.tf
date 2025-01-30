@@ -55,8 +55,4 @@ resource "aws_iam_role_policy_attachment" "s3_policy_attachment" {
   policy_arn = aws_iam_policy.s3_write_policy.arn
 }
 
-# IAM Instance Profile создает Instance Profile (профиль экземпляра), который может быть привязан к EC2-инстансам
-resource "aws_iam_instance_profile" "ec2_instance_profile" {
-  name = var.instance_profile_name
-  role = aws_iam_role.ec2_s3_access.name
-}
+

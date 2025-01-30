@@ -46,8 +46,10 @@ variable "Project" {
 #   default     = "Ubuntu"
 # }
 
-# variable "s3_bucket_name" {
-#   description = "Имя S3 бакета для хранения state-файла"
-#   type        = string
-# }
+variable "s3_bucket_name" {
+  description = "Имя S3 бакета для хранения state-файла"
+  type        = string
+  default     = "smmikh-dev-dip-2025-store-bucket"
+}
+
 

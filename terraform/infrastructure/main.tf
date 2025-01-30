@@ -30,12 +30,4 @@ module "ec2" {
   security_group_id = module.vpc.security_group_id
   vpc_id            = module.vpc.vpc_id
 
-  # Хранение
-  # s3_image_url = var.s3_bucket_name
-  # s3_image_url = data.terraform_remote_state.bootstrap.outputs.s3_bucket_name
-  # s3_bucket_arn  = data.terraform_remote_state.bootstrap.outputs.s3_bucket_arn
-
-  # IAM
-  iam_instance_profile = module.iam.instance_profile_name
 }
-
