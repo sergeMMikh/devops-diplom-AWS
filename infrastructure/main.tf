@@ -31,7 +31,9 @@ module "ec2" {
   vpc_id             = module.vpc.vpc_id
 
   # Хранение
-  s3_image_url = module.storage.s3_image_url
+  # s3_image_url = var.s3_bucket_name
+  # s3_image_url = data.terraform_remote_state.bootstrap.outputs.s3_bucket_name
+  # s3_bucket_arn  = data.terraform_remote_state.bootstrap.outputs.s3_bucket_arn
 
   # IAM
   iam_instance_profile = module.iam.instance_profile_name
@@ -41,23 +43,17 @@ module "iam" {
   source                = "./modules/iam"
   role_name             = "ec2-s3-access-role"
   policy_name           = "ec2-s3-write-policy"
-  s3_bucket_arn         = "arn:aws:s3:::hw-smmikh-january-2025-store-bucket"
+  # s3_bucket_arn         = "arn:aws:s3:::hw-smmikh-january-2025-store-bucket"
   instance_profile_name = "ec2-instance-profile"
 }
 
 
-# output "instances_info" {
-#   description = "Information about public instances"
-#   value       = module.instances.instances_info
-# }
-
-# output "alb_dns_name" {
-#   description = "DNS name of the Load Balancer"
-#   value       = module.instances.alb_dns_name
-# }
-
-# output "s3_image_url" {
-#     description = "Public URL of the image stored in S3"
-#     value       = module.storage.s3_image_url
+# data "terraform_remote_state" "bootstrap" {
+#   backend = "s3"
+#   config = {
+#     bucket = "terraform-state-bucket" # S3-бакет, где хранится `bootstrap`-state
+#     key    = "bootstrap/terraform.tfstate"
+#     region = "us-east-1"
+#   }
 # }
 

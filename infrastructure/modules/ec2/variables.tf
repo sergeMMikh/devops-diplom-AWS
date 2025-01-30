@@ -49,11 +49,6 @@ variable "security_group_id" {
   type        = string
 }
 
-variable "s3_image_url" {
-  type        = string
-  description = "The public URL of the image in S3"
-}
-
 variable "vpc_id" {
   type        = string
   description = "The ID of the VPC"

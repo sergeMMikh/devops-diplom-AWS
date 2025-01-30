@@ -18,3 +18,4 @@ output "s3_bucket_url" {
   description = "URL бакета для доступа"
   value       = module.s3.s3_bucket_url
 }
+

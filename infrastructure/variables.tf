@@ -46,8 +46,12 @@ variable "Platform" {
   default     = "Ubuntu"
 }
 
-
-# variable "vpc_id" {
+# variable "s3_bucket_name" {
 #   type        = string
-#   description = "The ID of the VPC"
+#   description = "S3 bucket name"
+# }
+
+# variable "s3_bucket_arn" {
+#   type        = string
+#   description = "S3 bucket ARN"
 # }

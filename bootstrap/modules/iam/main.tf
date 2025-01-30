@@ -19,7 +19,6 @@ resource "aws_iam_role" "ec2_s3_access" {
   })
 }
 
-# IAM Policy for S3 access создает IAM политику, которая определяет набор действий, разрешенных для роли
 resource "aws_iam_policy" "s3_write_policy" {
   name        = var.policy_name
   description = "Allow EC2 instances to write files to S3 bucket"
@@ -30,12 +29,14 @@ resource "aws_iam_policy" "s3_write_policy" {
       {
         Effect = "Allow",
         Action = [
-          # загрузка объектов в S3 и управление их правами доступа
+           "s3:ListBucket",
+          "s3:GetObject",
           "s3:PutObject",
+          "s3:DeleteObject",
           "s3:PutObjectAcl"
         ],
         # Применяется к ресурсам внутри S3-бакета, который указывается в переменной
-        # Resource = "${var.s3_bucket_arn}/*"
+        # Resource = "arn:aws:s3:::${var.s3_bucket_name}/*"
         Resource = "arn:aws:s3:::hw-smmikh-january-2025-store-bucket/*"
       }
     ]
