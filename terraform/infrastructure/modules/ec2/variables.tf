@@ -53,3 +53,27 @@ variable "vpc_id" {
   type        = string
   description = "The ID of the VPC"
 }
+
+variable "master_instance_type" {
+  description = "Тип инстанса для master node (от 2 CPU, 2GB RAM)"
+  type        = string
+  default     = "t3.medium"
+}
+
+variable "worker_instance_type" {
+  description = "Тип инстанса для worker node (от 1 CPU, 1GB RAM)"
+  type        = string
+  default     = "t3.small"
+}
+
+variable "master_disk_size" {
+  description = "Размер диска для master node (от 50GB)"
+  type        = number
+  default     = 50
+}
+
+variable "worker_disk_size" {
+  description = "Размер диска для worker node (от 100GB)"
+  type        = number
+  default     = 100
+}
