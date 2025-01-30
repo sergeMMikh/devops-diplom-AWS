@@ -4,6 +4,10 @@ resource "aws_s3_bucket" "backend_dd" {
   tags = {
     Name = "BackendStorageBucket"
   }
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 # Конфигурация шифрования бакета по умолчанию
