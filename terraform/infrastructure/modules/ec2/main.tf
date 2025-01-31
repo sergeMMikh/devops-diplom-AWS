@@ -65,4 +65,6 @@ resource "aws_instance" "worker_nodes" {
     Name = "k8s-worker-${count.index + 1}"
     Role = "worker"
   }
+
+  depends_on = [ aws_instance.master_node ]
 }
