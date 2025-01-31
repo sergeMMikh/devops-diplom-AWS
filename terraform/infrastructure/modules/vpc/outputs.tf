@@ -1,9 +1,9 @@
 output "public_subnets_id" {
-  value = [aws_subnet.public_a_4dd.id, aws_subnet.public_b_4dd.id]
+  value = [aws_subnet.public_a_4dd.id, aws_subnet.public_b_4dd.id, aws_subnet.public_c_4dd.id]
 }
 
 output "private_subnets_id" {
-  value = [aws_subnet.private_a_4dd.id, aws_subnet.private_b_4dd.id]
+  value = [aws_subnet.private_a_4dd.id, aws_subnet.private_b_4dd.id, aws_subnet.private_c_4dd.id]
 }
 
 output "security_group_id" {
@@ -50,10 +50,18 @@ output "public_subnet_b_id" {
   value = aws_subnet.public_b_4dd.id
 }
 
+output "public_subnet_c_id" {
+  value       = aws_subnet.public_c_4dd.id
+}
+
 output "private_subnet_a_id" {
   value = aws_subnet.private_a_4dd.id
 }
 
 output "private_subnet_b_id" {
   value = aws_subnet.private_b_4dd.id
+}
+
+output "private_subnet_c_id" {
+  value = aws_subnet.private_c_4dd.id
 }

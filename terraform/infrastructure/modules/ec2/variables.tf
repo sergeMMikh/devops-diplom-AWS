@@ -1,8 +1,14 @@
-variable "vm_public_instance_type" {
-  type        = string
-  description = "The type of instance"
-  default     = "t2.micro"
-}
+# variable "vm_master_instance_type" {
+#   type        = string
+#   description = "The type of instance"
+#   default     = "t3.small"
+# }
+
+# variable "vm_worker_instance_type" {
+#   type        = string
+#   description = "The type of instance"
+#   default     = "t2.micro"
+# }
 
 variable "key_name" {
   type        = string
@@ -57,13 +63,13 @@ variable "vpc_id" {
 variable "master_instance_type" {
   description = "Тип инстанса для master node (от 2 CPU, 2GB RAM)"
   type        = string
-  default     = "t3.medium"
+  default     = "t3.small"
 }
 
 variable "worker_instance_type" {
   description = "Тип инстанса для worker node (от 1 CPU, 1GB RAM)"
   type        = string
-  default     = "t3.small"
+  default     = "t2.micro"
 }
 
 variable "master_disk_size" {

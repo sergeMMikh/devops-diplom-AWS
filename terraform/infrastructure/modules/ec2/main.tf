@@ -14,6 +14,12 @@ data "aws_ami" "ubuntu" {
   owners = ["099720109477"] # Canonical
 }
 
+
+locals {
+  user_data_base = file("${path.module}/user_data_base.yaml.tpl")
+}
+
+
 # 🔹 Master Node (1 инстанс)
 resource "aws_instance" "master_node" {
   ami             = data.aws_ami.ubuntu.id
@@ -26,7 +32,10 @@ resource "aws_instance" "master_node" {
     volume_size = var.master_disk_size
   }
 
-  user_data = templatefile("${path.module}/user_data.yaml.tpl", {})
+  # user_data = templatefile("${path.module}/user_data_master.yaml.tpl", {})
+  user_data = templatefile("${path.module}/user_data_master.yaml.tpl", {
+    user_data_base = local.user_data_base
+  })
 
   tags = {
     Name = "k8s-master"
@@ -47,7 +56,10 @@ resource "aws_instance" "worker_nodes" {
     volume_size = var.worker_disk_size
   }
 
-  user_data = templatefile("${path.module}/user_data.yaml.tpl", {})
+  # user_data = templatefile("${path.module}/user_data_worker.yaml.tpl", {})
+  user_data = templatefile("${path.module}/user_data_worker.yaml.tpl", {
+    user_data_base = local.user_data_base
+  })
 
   tags = {
     Name = "k8s-worker-${count.index + 1}"

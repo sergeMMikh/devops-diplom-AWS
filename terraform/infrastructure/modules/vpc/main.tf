@@ -16,18 +16,6 @@ resource "aws_internet_gateway" "igw_4dd" {
   }
 }
 
-# resource "aws_subnet" "public" {
-#   vpc_id     = aws_vpc.main.id
-#   cidr_block = "10.10.1.0/24"
-
-#   map_public_ip_on_launch = true
-
-#   availability_zone = "eu-central-1a"
-
-#   tags = {
-#     Name = "PublicSubnet"
-#   }
-# }
 
 resource "aws_subnet" "public_a_4dd" {
   vpc_id            = aws_vpc.main_4dd.id
@@ -53,6 +41,19 @@ resource "aws_subnet" "public_b_4dd" {
   }
 }
 
+resource "aws_subnet" "public_c_4dd" {
+  vpc_id            = aws_vpc.main_4dd.id
+  cidr_block        = "10.10.12.0/24"  # Новый диапазон
+  availability_zone = "eu-central-1c"
+
+  map_public_ip_on_launch = true
+
+  tags = {
+    Name = "PublicSubnet_C_4dd"
+  }
+}
+
+
 resource "aws_subnet" "private_a_4dd" {
   vpc_id            = aws_vpc.main_4dd.id
   cidr_block        = "10.10.20.0/24"  # Изменённый диапазон
@@ -70,6 +71,16 @@ resource "aws_subnet" "private_b_4dd" {
 
   tags = {
     Name = "PrivateSubnetB"
+  }
+}
+
+resource "aws_subnet" "private_c_4dd" {
+  vpc_id            = aws_vpc.main_4dd.id
+  cidr_block        = "10.10.22.0/24"  # Новый диапазон
+  availability_zone = "eu-central-1c"
+
+  tags = {
+    Name = "PrivateSubnetС"
   }
 }
 
@@ -97,6 +108,10 @@ resource "aws_route_table_association" "public_b_4dd" {
   route_table_id = aws_route_table.public_4dd.id
 }
 
+resource "aws_route_table_association" "public_c_4dd" {
+  subnet_id      = aws_subnet.public_c_4dd.id
+  route_table_id = aws_route_table.public_4dd.id
+}
 
 # Elastic IP для NAT Gateway в зоне public_a
 resource "aws_eip" "nat_a_4dd" {
@@ -168,6 +183,19 @@ resource "aws_route_table" "private_b_4dd" {
   }
 }
 
+resource "aws_route_table" "private_c_4dd" {
+  vpc_id = aws_vpc.main_4dd.id
+
+  route {
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.nat_b_4dd.id  # Используем NAT из зоны B
+  }
+
+  tags = {
+    Name = "PrivateRouteTableC"
+  }
+}
+
 # Ассоциация private_a с таблицей маршрутов private_a
 resource "aws_route_table_association" "private_a_4dd" {
   subnet_id      = aws_subnet.private_a_4dd.id
@@ -178,6 +206,11 @@ resource "aws_route_table_association" "private_a_4dd" {
 resource "aws_route_table_association" "private_b_4dd" {
   subnet_id      = aws_subnet.private_b_4dd.id
   route_table_id = aws_route_table.private_b_4dd.id
+}
+
+resource "aws_route_table_association" "private_c_4dd" {
+  subnet_id      = aws_subnet.private_c_4dd.id
+  route_table_id = aws_route_table.private_c_4dd.id
 }
 
 resource "aws_security_group" "default_4dd" {

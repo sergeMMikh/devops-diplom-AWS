@@ -45,4 +45,3 @@ variable "Platform" {
   description = "The instance platform"
   default     = "Ubuntu"
 }
-

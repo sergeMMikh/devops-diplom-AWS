@@ -2,7 +2,6 @@ output "s3_bucket_name" {
   description = "Имя S3 бакета"
   value       = aws_s3_bucket.backend_dd.id
 }
-
 output "s3_bucket_arn" {
   description = "ARN S3 бакета"
   value       = aws_s3_bucket.backend_dd.arn

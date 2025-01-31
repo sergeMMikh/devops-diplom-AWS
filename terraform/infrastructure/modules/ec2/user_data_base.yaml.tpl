@@ -32,4 +32,3 @@ runcmd:
   - kubeadm config images pull
   - swapoff -a
   - sed -i '/ swap / s/^/#/' /etc/fstab
-  - echo "Node setup complete. Run 'kubeadm join' when the master is ready."

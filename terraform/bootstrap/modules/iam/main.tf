@@ -22,6 +22,9 @@ resource "aws_iam_role" "dd-service-role" {
       }
     ]
   })
+
+  force_detach_policies = true  # Отключает все политики перед удалением
+
 }
 
 resource "aws_iam_policy" "s3_write_policy" {
@@ -51,8 +54,9 @@ resource "aws_iam_policy" "s3_write_policy" {
 # Attach Policy to Role
 resource "aws_iam_role_policy_attachment" "s3_policy_attachment" {
   role = aws_iam_role.dd-service-role.name
-  # ARN (Amazon Resource Name) IAM политики
   policy_arn = aws_iam_policy.s3_write_policy.arn
+
+    depends_on = [aws_iam_policy.s3_write_policy]
 }
 
 

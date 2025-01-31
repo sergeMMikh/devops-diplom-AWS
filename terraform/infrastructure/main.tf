@@ -12,9 +12,6 @@ module "security_group" {
 module "ec2" {
   source = "./modules/ec2"
 
-  # Тип инстанса
-  vm_public_instance_type = var.vm_public_instance_type
-
   # Доступ по SSH
   key_name = var.key_name
 
