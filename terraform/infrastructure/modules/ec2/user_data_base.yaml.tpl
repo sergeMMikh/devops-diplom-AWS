@@ -5,6 +5,8 @@ package_upgrade: true
 packages:
   - apt-transport-https
   - ca-certificates
+  - net-tools
+  - mc
   - curl
   - gnupg
   - docker.io

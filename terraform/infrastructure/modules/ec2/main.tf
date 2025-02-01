@@ -32,7 +32,6 @@ resource "aws_instance" "master_node" {
     volume_size = var.master_disk_size
   }
 
-  # user_data = templatefile("${path.module}/user_data_master.yaml.tpl", {})
   user_data = templatefile("${path.module}/user_data_master.yaml.tpl", {
     user_data_base = local.user_data_base
   })
@@ -56,7 +55,6 @@ resource "aws_instance" "worker_nodes" {
     volume_size = var.worker_disk_size
   }
 
-  # user_data = templatefile("${path.module}/user_data_worker.yaml.tpl", {})
   user_data = templatefile("${path.module}/user_data_worker.yaml.tpl", {
     user_data_base = local.user_data_base
   })
@@ -66,5 +64,5 @@ resource "aws_instance" "worker_nodes" {
     Role = "worker"
   }
 
-  depends_on = [ aws_instance.master_node ]
+  depends_on = [aws_instance.master_node]
 }

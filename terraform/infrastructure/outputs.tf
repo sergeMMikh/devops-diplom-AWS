@@ -78,3 +78,32 @@ output "security_group_id" {
   value       = module.security_group.security_group_id
 }
 
+output "master_node_public_ip" {
+  description = "Публичный IP мастер-ноды"
+  value       = module.ec2.master_node_public_ip
+}
+
+output "master_node_private_ip" {
+  description = "Приватный IP мастер-ноды"
+  value       = module.ec2.master_node_private_ip
+}
+
+output "worker_nodes_public_ips" {
+  description = "Публичные IP worker-нод"
+  value       = module.ec2.worker_nodes_public_ips
+}
+
+output "worker_nodes_private_ips" {
+  description = "Приватные IP worker-нод"
+  value       = module.ec2.worker_nodes_private_ips
+}
+
+output "master_node_id" {
+  description = "ID мастер-ноды"
+  value       = module.ec2.master_node_id
+}
+
+output "worker_nodes_ids" {
+  description = "Публичные IP worker-нод"
+  value       = module.ec2.worker_nodes_ids
+}
