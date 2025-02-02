@@ -28,3 +28,10 @@ module "ec2" {
   vpc_id            = module.vpc.vpc_id
 
 }
+
+
+module "eks" {
+  source     = "./modules/eks"
+  subnet_ids = [module.vpc.public_subnet_a_id, module.vpc.public_subnet_b_id]
+  vpc_id     = module.vpc.vpc_id
+}
