@@ -7,15 +7,6 @@ module "eks" {
   vpc_id     = var.vpc_id
   subnet_ids = var.subnet_ids
 
-  #   node_groups = {
-  #     eks_nodes = {
-  #       desired_capacity = 3
-  #       min_size         = 3
-  #       max_size         = 3
-  #       instance_types   = ["t3.medium"]
-  #     }
-  #   }
-
   eks_managed_node_groups = {
     eks_nodes = { # <-- Добавляем название группы узлов
       ami_type       = "AL2023_x86_64_STANDARD"
@@ -31,3 +22,31 @@ module "eks" {
     Terraform = "true"
   }
 }
+
+resource "aws_launch_template" "eks_nodes" {
+  name_prefix   = "eks-nodes"
+  image_id      = var.ami_id
+  instance_type = var.node_instance_type
+  key_name      = var.key_name  # Подключаем SSH-ключ
+
+  network_interfaces {
+    associate_public_ip_address = true
+    security_groups             = [var.security_group_id]  # Используем security_group из модуля
+  }
+
+  tag_specifications {
+    resource_type = "instance"
+    tags = {
+      Name = "eks-worker"
+    }
+  }
+}
+
+
+data "aws_instances" "eks_worker_nodes" {
+  instance_tags = {
+    "eks:nodegroup-name" = "eks_nodes"
+  }
+}
+
+

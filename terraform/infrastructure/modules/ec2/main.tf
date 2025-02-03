@@ -20,52 +20,52 @@ locals {
 }
 
 
-# 🔹 Master Node (1 инстанс)
-resource "aws_instance" "master_node" {
-  ami             = data.aws_ami.ubuntu.id
-  instance_type   = var.master_instance_type
-  key_name        = var.key_name
-  subnet_id       = var.subnet_ids[0]
-  security_groups = [var.security_group_id]
-  private_ip      = "10.10.10.100" # Фиксированный IP для мастер-ноды
+# # 🔹 Master Node (1 инстанс)
+# resource "aws_instance" "master_node" {
+#   ami             = data.aws_ami.ubuntu.id
+#   instance_type   = var.master_instance_type
+#   key_name        = var.key_name
+#   subnet_id       = var.subnet_ids[0]
+#   security_groups = [var.security_group_id]
+#   private_ip      = "10.10.10.100" # Фиксированный IP для мастер-ноды
 
-  root_block_device {
-    volume_size = var.master_disk_size
-  }
+#   root_block_device {
+#     volume_size = var.master_disk_size
+#   }
 
-  user_data = templatefile("${path.module}/user_data_master.yaml.tpl", {
-    user_data_base = local.user_data_base
-  })
+#   user_data = templatefile("${path.module}/user_data_master.yaml.tpl", {
+#     user_data_base = local.user_data_base
+#   })
 
-  tags = {
-    Name = "k8s-master"
-    Role = "master"
-  }
-}
+#   tags = {
+#     Name = "k8s-master"
+#     Role = "master"
+#   }
+# }
 
-# 🔹 Worker Nodes (2 инстанса)
-resource "aws_instance" "worker_nodes" {
-  count           = 2
-  ami             = data.aws_ami.ubuntu.id
-  instance_type   = var.worker_instance_type
-  key_name        = var.key_name
-  subnet_id       = element(var.subnet_ids, count.index + 1)
-  security_groups = [var.security_group_id]
-  private_ip      = element(["10.10.11.101", "10.10.10.102"], count.index) # Фиксированные IP для worker-нод 10.10.11.250 10.10.10.134
+# # 🔹 Worker Nodes (2 инстанса)
+# resource "aws_instance" "worker_nodes" {
+#   count           = 2
+#   ami             = data.aws_ami.ubuntu.id
+#   instance_type   = var.worker_instance_type
+#   key_name        = var.key_name
+#   subnet_id       = element(var.subnet_ids, count.index + 1)
+#   security_groups = [var.security_group_id]
+#   private_ip      = element(["10.10.11.101", "10.10.10.102"], count.index) # Фиксированные IP для worker-нод 10.10.11.250 10.10.10.134
 
 
-  root_block_device {
-    volume_size = var.worker_disk_size
-  }
+#   root_block_device {
+#     volume_size = var.worker_disk_size
+#   }
 
-  user_data = templatefile("${path.module}/user_data_worker.yaml.tpl", {
-    user_data_base = local.user_data_base
-  })
+#   user_data = templatefile("${path.module}/user_data_worker.yaml.tpl", {
+#     user_data_base = local.user_data_base
+#   })
 
-  tags = {
-    Name = "k8s-worker-${count.index + 1}"
-    Role = "worker"
-  }
+#   tags = {
+#     Name = "k8s-worker-${count.index + 1}"
+#     Role = "worker"
+#   }
 
-  depends_on = [aws_instance.master_node]
-}
+#   depends_on = [aws_instance.master_node]
+# }
