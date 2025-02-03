@@ -10,7 +10,7 @@ module "eks" {
   eks_managed_node_groups = {
     eks_nodes = { # <-- Добавляем название группы узлов
       ami_type       = "AL2023_x86_64_STANDARD"
-      instance_types = ["m5.medium"]
+      instance_types = ["t2.medium"]
       min_size       = 3
       max_size       = 3
       desired_size   = 3
@@ -24,7 +24,7 @@ module "eks" {
 }
 
 resource "aws_launch_template" "eks_nodes" {
-  name_prefix   = "eks-nodes"
+  name_prefix   = "eks-node"
   image_id      = var.ami_id
   instance_type = var.node_instance_type
   key_name      = var.key_name  # Подключаем SSH-ключ
@@ -37,7 +37,7 @@ resource "aws_launch_template" "eks_nodes" {
   tag_specifications {
     resource_type = "instance"
     tags = {
-      Name = "eks-worker"
+      Name = "eks-node"
     }
   }
 }
