@@ -1,10 +1,10 @@
-# ✅ VPC
+# VPC
 output "vpc_id" {
   description = "ID созданной VPC"
   value       = module.vpc.vpc_id
 }
 
-# ✅ Public и Private Subnets
+# Public и Private Subnets
 output "public_subnets_id" {
   description = "ID всех публичных подсетей"
   value       = module.vpc.public_subnets_id
@@ -35,7 +35,7 @@ output "private_subnet_b_id" {
   value       = module.vpc.private_subnet_b_id
 }
 
-# ✅ Интернет-шлюз и NAT-шлюзы
+# Интернет-шлюз и NAT-шлюзы
 output "internet_gateway_id" {
   description = "ID Internet Gateway"
   value       = module.vpc.internet_gateway_id
@@ -51,7 +51,7 @@ output "nat_gateway_b_id" {
   value       = module.vpc.nat_gateway_b_id
 }
 
-# ✅ Таблицы маршрутизации
+# Таблицы маршрутизации
 output "route_table_public_a_id" {
   description = "ID публичной таблицы маршрутов A"
   value       = module.vpc.route_table_public_a_id
@@ -72,32 +72,37 @@ output "route_table_private_b_id" {
   value       = module.vpc.route_table_private_b_id
 }
 
-# ✅ Security Group (EKS)
+# Security Group (EKS)
 output "security_group_id" {
   description = "ID Security Group для EKS"
   value       = module.eks.security_group_id
 }
 
-# ✅ Публичные IP worker-нод
-output "eks_worker_nodes_public_ips" {
-  description = "Публичные IP worker-нод"
-  value       = module.eks.eks_worker_nodes_public_ips
+output "eks_load_balancer_dns" {
+  description = "DNS адрес Load Balancer для EKS"
+  value       = module.eks.eks_load_balancer_dns
 }
 
-# ✅ Приватные IP worker-нод
-output "eks_worker_nodes_private_ips" {
-  description = "Приватные IP worker-нод"
-  value       = module.eks.eks_worker_nodes_private_ips
-}
+# # Публичные IP worker-нод
+# output "eks_worker_nodes_public_ips" {
+#   description = "Публичные IP worker-нод"
+#   value       = module.eks.eks_worker_nodes_public_ips
+# }
 
-# # ✅ Получение списка worker-нод
+# # Приватные IP worker-нод
+# output "eks_worker_nodes_private_ips" {
+#   description = "Приватные IP worker-нод"
+#   value       = module.eks.eks_worker_nodes_private_ips
+# }
+
+# #  Получение списка worker-нод
 # output "eks_worker_nodes" {
 #   description = "Worker Nodes EKS (список инстансов в AutoScaling)"
 #   value       = module.eks.eks_worker_nodes
 # }
 
 
-# # ✅ Security Group (из модуля security_group)
+# # Security Group (из модуля security_group)
 # output "security_group_id" {
 #   description = "ID созданной Security Group"
 #   value       = module.security_group.security_group_id

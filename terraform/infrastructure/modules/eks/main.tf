@@ -27,10 +27,10 @@ resource "aws_launch_template" "eks_nodes" {
   name_prefix   = "eks-node"
   image_id      = var.ami_id
   instance_type = var.node_instance_type
-  key_name      = var.key_name  # Подключаем SSH-ключ
+  key_name      = var.key_name 
 
   network_interfaces {
-    associate_public_ip_address = true
+    # associate_public_ip_address = true
     security_groups             = [var.security_group_id]  # Используем security_group из модуля
   }
 

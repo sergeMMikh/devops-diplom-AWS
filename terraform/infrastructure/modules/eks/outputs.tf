@@ -11,14 +11,20 @@ output "security_group_id" {
 # }
 
 
-# ✅ Список публичных IP worker-нод
-output "eks_worker_nodes_public_ips" {
-  description = "Публичные IP worker-нод"
-  value       = data.aws_instances.eks_worker_nodes.public_ips
-}
+# # ✅ Список публичных IP worker-нод
+# output "eks_worker_nodes_public_ips" {
+#   description = "Публичные IP worker-нод"
+#   value       = data.aws_instances.eks_worker_nodes.public_ips
+# }
 
 # ✅ Список приватных IP worker-нод
 output "eks_worker_nodes_private_ips" {
   description = "Приватные IP worker-нод"
   value       = data.aws_instances.eks_worker_nodes.private_ips
 }
+
+output "eks_load_balancer_dns" {
+  description = "DNS адрес Load Balancer для EKS"
+  value       = module.eks.cluster_endpoint
+}
+
