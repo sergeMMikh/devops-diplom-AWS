@@ -1,0 +1,37 @@
+sudo apt install -y git python3 python3-pip python3.10-venv
+git clone https://github.com/kubernetes-sigs/kubespray.git
+cd kubespray/
+python3 -m venv .venv && source .venv/bin/activate
+
+git checkout release-2.26
+python3 -m pip install -r requirements.txt
+cp -rfp inventory/sample inventory/mycluster
+declare -a IPS=()
+declare -a IPS=(10.10.11.101 10.10.10.102 10.10.10.100)
+pip3 install ruamel.yaml
+
+CONFIG_FILE=inventory/mycluster/hosts.yaml python3 contrib/inventory_builder/inventory.py ${IPS[@]}
+nano inventory/mycluster/hosts.yaml cluster.yml
+ssh-keygen -t ed25519 -C "ansible-key" -N "" -f ~/.ssh/id_ed25519
+
+sudo apt update && sudo apt install -y sshpass
+for ip in 10.10.10.73 10.10.11.59 10.10.10.44; do
+  sshpass -p "vagrant" ssh-copy-id -i ~/.ssh/id_ed25519.pub -o StrictHostKeyChecking=no vagrant@$ip
+done
+
+nano ~/.ssh/1207_4_Crystall.pem
+sudo chmod 700 ~/.ssh/1207_4_Crystall.pem
+cp inventory/mycluster/hosts.yaml  ..
+git checkout master
+python3 -m pip install -r requirements.txt
+
+sudo apt update && sudo apt install -y sshpass
+
+
+ansible all -m ping -i inventory/mycluster/hosts.yaml -u ubuntu --private-key ~/.ssh/1207_4_Crystall.pem
+ansible-playbook -i inventory/mycluster/hosts.yaml cluster.yml -u ubuntu --private-key ~/.ssh/1207_4_Crystall.pem -b -v &
+
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
