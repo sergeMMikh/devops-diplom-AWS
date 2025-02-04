@@ -229,7 +229,8 @@ resource "aws_security_group" "default_4dd" {
       "10251",
       "10252",
       "30000",
-      "32767"
+      "32767",
+      "10248"
     ]
     content {
       from_port   = ingress.value

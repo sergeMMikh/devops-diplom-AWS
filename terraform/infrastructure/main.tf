@@ -17,7 +17,8 @@ module "security_group" {
     10251,
     10252,
     30000,
-    32767
+    32767,
+    10248
   ]
   allowed_cidr_blocks = ["0.0.0.0/0"]
 }
