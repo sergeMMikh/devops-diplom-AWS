@@ -98,14 +98,13 @@
 Список виртуальных машин в разных зонах доступности </br>
 ![instances](images/Task_2_0.png)</br>
 
-Для установки использовал *kubespray*. 
+Для установки кластера использовал *kubespray*. Ниже приведён список нодов. 
 </br>
 ![instances](images/Task_2_1.png)</br>
-
-
-
-
-
+Вывод команды `kubectl get pods --all-namespaces`</br>
+![instances](images/Task_2_2.png)</br>
+В файле `~/.kube/config` находятся данные для доступа к кластеру.</br>
+![instances](images/Task_2_3.png)</br>
 
 ---
 ### Создание тестового приложения

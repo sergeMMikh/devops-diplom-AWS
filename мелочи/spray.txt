@@ -20,7 +20,6 @@ git checkout master
 python3 -m pip install -r requirements.txt
 
 ansible all -m ping -i inventory/mycluster/hosts.yaml -u ubuntu --private-key ~/.ssh/1207_4_Crystall.pem
-
 nano inventory/mycluster/group_vars/k8s_cluster/k8s-cluster.yml
 
 ansible-playbook -i inventory/mycluster/hosts.yaml cluster.yml -u ubuntu --private-key ~/.ssh/1207_4_Crystall.pem -b -v &
