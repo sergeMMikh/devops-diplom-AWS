@@ -19,7 +19,7 @@ resource "aws_internet_gateway" "igw_4dd" {
 
 resource "aws_subnet" "public_a_4dd" {
   vpc_id            = aws_vpc.main_4dd.id
-  cidr_block        = "10.10.10.0/24"  # Изменённый диапазон
+  cidr_block        = "10.10.10.0/24" # Изменённый диапазон
   availability_zone = "eu-central-1a"
 
   map_public_ip_on_launch = true
@@ -31,7 +31,7 @@ resource "aws_subnet" "public_a_4dd" {
 
 resource "aws_subnet" "public_b_4dd" {
   vpc_id            = aws_vpc.main_4dd.id
-  cidr_block        = "10.10.11.0/24"  # Новый диапазон
+  cidr_block        = "10.10.11.0/24" # Новый диапазон
   availability_zone = "eu-central-1b"
 
   map_public_ip_on_launch = true
@@ -43,7 +43,7 @@ resource "aws_subnet" "public_b_4dd" {
 
 resource "aws_subnet" "public_c_4dd" {
   vpc_id            = aws_vpc.main_4dd.id
-  cidr_block        = "10.10.12.0/24"  # Новый диапазон
+  cidr_block        = "10.10.12.0/24" # Новый диапазон
   availability_zone = "eu-central-1c"
 
   map_public_ip_on_launch = true
@@ -56,7 +56,7 @@ resource "aws_subnet" "public_c_4dd" {
 
 resource "aws_subnet" "private_a_4dd" {
   vpc_id            = aws_vpc.main_4dd.id
-  cidr_block        = "10.10.20.0/24"  # Изменённый диапазон
+  cidr_block        = "10.10.20.0/24" # Изменённый диапазон
   availability_zone = "eu-central-1a"
 
   tags = {
@@ -66,7 +66,7 @@ resource "aws_subnet" "private_a_4dd" {
 
 resource "aws_subnet" "private_b_4dd" {
   vpc_id            = aws_vpc.main_4dd.id
-  cidr_block        = "10.10.21.0/24"  # Новый диапазон
+  cidr_block        = "10.10.21.0/24" # Новый диапазон
   availability_zone = "eu-central-1b"
 
   tags = {
@@ -76,7 +76,7 @@ resource "aws_subnet" "private_b_4dd" {
 
 resource "aws_subnet" "private_c_4dd" {
   vpc_id            = aws_vpc.main_4dd.id
-  cidr_block        = "10.10.22.0/24"  # Новый диапазон
+  cidr_block        = "10.10.22.0/24" # Новый диапазон
   availability_zone = "eu-central-1c"
 
   tags = {
@@ -161,7 +161,7 @@ resource "aws_route_table" "private_a_4dd" {
 
   route {
     cidr_block     = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.nat_a_4dd.id  # Привязка к NAT в eu-central-1a
+    nat_gateway_id = aws_nat_gateway.nat_a_4dd.id # Привязка к NAT в eu-central-1a
   }
 
   tags = {
@@ -175,7 +175,7 @@ resource "aws_route_table" "private_b_4dd" {
 
   route {
     cidr_block     = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.nat_b_4dd.id  # Привязка к NAT в eu-central-1b
+    nat_gateway_id = aws_nat_gateway.nat_b_4dd.id # Привязка к NAT в eu-central-1b
   }
 
   tags = {
@@ -188,7 +188,7 @@ resource "aws_route_table" "private_c_4dd" {
 
   route {
     cidr_block     = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.nat_b_4dd.id  # Используем NAT из зоны B
+    nat_gateway_id = aws_nat_gateway.nat_b_4dd.id # Используем NAT из зоны B
   }
 
   tags = {
@@ -217,7 +217,21 @@ resource "aws_security_group" "default_4dd" {
   vpc_id = aws_vpc.main_4dd.id
 
   dynamic "ingress" {
-    for_each = ["80", "443", "22"]
+    for_each = [
+      "22",
+      "80",
+      "443",
+      "6443",
+      "2379",
+      "2380",
+      "8080",
+      "10250",
+      "10251",
+      "10252",
+      "30000",
+      "32767",
+      "10248"
+    ]
     content {
       from_port   = ingress.value
       to_port     = ingress.value
