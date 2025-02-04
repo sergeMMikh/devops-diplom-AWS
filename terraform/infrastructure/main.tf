@@ -3,10 +3,23 @@ module "vpc" {
 }
 
 module "security_group" {
-  source                = "./modules/security_group"
-  vpc_id                = module.vpc.vpc_id
-  allowed_ingress_ports = [80, 443]
-  allowed_cidr_blocks   = ["0.0.0.0/0"]
+  source = "./modules/security_group"
+  vpc_id = module.vpc.vpc_id
+  allowed_ingress_ports = [
+    22,
+    80,
+    443,
+    6443,
+    2379,
+    2380,
+    8080,
+    10250,
+    10251,
+    10252,
+    30000,
+    32767
+  ]
+  allowed_cidr_blocks = ["0.0.0.0/0"]
 }
 
 module "ec2" {
