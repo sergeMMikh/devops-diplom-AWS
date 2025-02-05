@@ -259,3 +259,81 @@ resource "aws_security_group" "default_4dd" {
   }
 }
 
+resource "aws_network_acl" "main_4dd_acl" {
+  vpc_id = aws_vpc.main_4dd.id
+
+  tags = {
+    Name = "Main_Network_ACL_4dd"
+  }
+}
+
+resource "aws_network_acl_rule" "allow_all_inbound" {
+  network_acl_id = aws_network_acl.main_4dd_acl.id
+  rule_number    = 100
+  protocol       = "-1"  # Все протоколы
+  rule_action    = "allow"
+  egress         = false  # Входящий трафик
+  cidr_block     = "0.0.0.0/0"
+}
+
+resource "aws_network_acl_rule" "allow_all_outbound" {
+  network_acl_id = aws_network_acl.main_4dd_acl.id
+  rule_number    = 100
+  protocol       = "-1"  # Все протоколы
+  rule_action    = "allow"
+  egress         = true  # Исходящий трафик
+  cidr_block     = "0.0.0.0/0"
+}
+
+resource "aws_network_acl_association" "public_a_4dd" {
+  network_acl_id = aws_network_acl.main_4dd_acl.id
+  subnet_id      = aws_subnet.public_a_4dd.id
+}
+
+resource "aws_network_acl_association" "public_b_4dd" {
+  network_acl_id = aws_network_acl.main_4dd_acl.id
+  subnet_id      = aws_subnet.public_b_4dd.id
+}
+
+resource "aws_network_acl_association" "public_c_4dd" {
+  network_acl_id = aws_network_acl.main_4dd_acl.id
+  subnet_id      = aws_subnet.public_c_4dd.id
+}
+
+resource "aws_network_acl_association" "private_a_4dd" {
+  network_acl_id = aws_network_acl.main_4dd_acl.id
+  subnet_id      = aws_subnet.private_a_4dd.id
+}
+
+resource "aws_network_acl_association" "private_b_4dd" {
+  network_acl_id = aws_network_acl.main_4dd_acl.id
+  subnet_id      = aws_subnet.private_b_4dd.id
+}
+
+resource "aws_network_acl_association" "private_c_4dd" {
+  network_acl_id = aws_network_acl.main_4dd_acl.id
+  subnet_id      = aws_subnet.private_c_4dd.id
+}
+
+data "aws_network_acls" "default" {
+  vpc_id = aws_vpc.main_4dd.id
+}
+
+resource "aws_network_acl_rule" "allow_all_ingress" {
+  network_acl_id = tolist(data.aws_network_acls.default.ids)[0] # Берём первый NACL
+  rule_number    = 110
+  protocol       = "-1"
+  rule_action    = "allow"
+  egress         = false
+  cidr_block     = "0.0.0.0/0"
+}
+
+resource "aws_network_acl_rule" "allow_all_egress" {
+  network_acl_id = tolist(data.aws_network_acls.default.ids)[0]
+  rule_number    = 110
+  protocol       = "-1"
+  rule_action    = "allow"
+  egress         = true
+  cidr_block     = "0.0.0.0/0"
+}
+

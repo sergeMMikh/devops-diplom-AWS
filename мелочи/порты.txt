@@ -1,0 +1,27 @@
+список портов инстанса:
+
+aws ec2 describe-instances \
+    --instance-ids i-0d9ca444ccfea89ce \
+    --query "Reservations[*].Instances[*].SecurityGroups[*].GroupId" \
+    --output text
+
+aws ec2 describe-security-groups \
+    --group-ids sg-0ed869bf1e366a8e7 \
+    --query "SecurityGroups[*].IpPermissions[*].{FromPort:FromPort,ToPort:ToPort,Protocol:IpProtocol,CIDR:IpRanges[*].CidrIp}" \
+    --output table
+
+
+Проверка NACL:
+aws ec2 describe-network-acls --filters "Name=vpc-id,Values=vpc-005fedf944528a0c0" \
+    --query "NetworkAcls[*].Entries[*]" --output table
+
+aws ec2 describe-route-tables --filters "Name=vpc-id,Values=vpc-005fedf944528a0c0" --output table
+
+aws ec2 describe-network-acls --filters "Name=vpc-id,Values=vpc-005fedf944528a0c0" --output table
+
+kubectl get componentstatuses
+kubectl version -o json
+kubectl cluster-info
+kubectl config view
+
+https://www.techrepublic.com/article/how-to-quickly-install-kubernetes-on-ubuntu/
