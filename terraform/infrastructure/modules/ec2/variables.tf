@@ -51,7 +51,7 @@ variable "vpc_id" {
 variable "master_instance_type" {
   description = "Тип инстанса для master node (от 2 CPU, 2GB RAM)"
   type        = string
-  default     = "t3.large"
+  default     = "m5.large"
 }
 
 variable "worker_instance_type" {
