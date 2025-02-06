@@ -1,0 +1,26 @@
+alertmanager:
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hosts: [alertmanager.demo.com]
+
+grafana:
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hosts: [grafana.demo.com]
+
+prometheus:
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hosts: [prometheus.demo.com]
+
+windowsMonitoring:
+  enabled: false
+
+defaultRules:
+  rules:
+    alertmanager: false
+    etcd: false
+    configReloades: false
