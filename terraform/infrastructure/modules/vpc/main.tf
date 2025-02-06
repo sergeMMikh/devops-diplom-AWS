@@ -110,21 +110,6 @@ resource "aws_route_table" "public_4dd" {
   }
 }
 
-resource "aws_route_table_association" "public_a_4dd" {
-  subnet_id      = aws_subnet.public_a_4dd.id
-  route_table_id = aws_route_table.public_4dd.id
-}
-
-resource "aws_route_table_association" "public_b_4dd" {
-  subnet_id      = aws_subnet.public_b_4dd.id
-  route_table_id = aws_route_table.public_4dd.id
-}
-
-resource "aws_route_table_association" "public_c_4dd" {
-  subnet_id      = aws_subnet.public_c_4dd.id
-  route_table_id = aws_route_table.public_4dd.id
-}
-
 # Elastic IP для NAT Gateway в зоне public_a
 resource "aws_eip" "nat_a_4dd" {
   domain = "vpc"
