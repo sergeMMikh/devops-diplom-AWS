@@ -86,4 +86,7 @@ kubectl get pods -n ingress-nginx
 
 
 
+kubectl create clusterrolebinding kubelet-admin-binding \
+  --clusterrole=cluster-admin \
+  --user=kube-apiserver-kubelet-client
 

@@ -3,6 +3,8 @@ kind: Deployment
 metadata:
   name: test-app
   namespace: monitoring
+  labels:
+    app: test-app
 spec:
   replicas: 1
   selector:
@@ -14,7 +16,7 @@ spec:
         app: test-app
     spec:
       containers:
-      - name: test-app
-        image: sergemmikh/test-app:1.0.0
-        ports:
-        - containerPort: 8080
+        - name: test-app
+          image: sergemmikh/test-app:1.0.0
+          ports:
+            - containerPort: 8080
