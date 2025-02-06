@@ -98,14 +98,21 @@
 Список виртуальных машин в разных зонах доступности </br>
 ![instances](images/Task_2_0.png)</br>
 
-Для установки использовал *kubeadm*. 
+Для установки кластера использовал *kubespray*. Ниже приведён список нодов. 
 </br>
 ![instances](images/Task_2_1.png)</br>
+Вывод команды `kubectl get pods --all-namespaces`</br>
+![instances](images/Task_2_2.png)</br>
+В файле `~/.kube/config` находятся данные для доступа к кластеру.</br>
+![instances](images/Task_2_3.png)</br>
 
-Однако, имея готовый кластер я решил освоить технология AWS EKS. А потому текущее решение я оставляю в ветке *kubeadm*.
+К сожалению, после перезапуска виртуальных компьютеров кластер отказался работать. Анализ работоспособности системных узлов показал что часть из них упала. Попытки поднять отдельно неработающие поды не привели к успеху.</br>
+![instances](images/Task_2_4.png)</br>
 
+Так как инструменты terraform позволяют достаточно быстро перезапустить всю инфраструктуру с нуля, была сделана попытка установить кластер на чистые виртуальные машины. Что так же не увенчалось успехом.</br>
+![instances](images/Task_2_5.png)</br>
 
-
+Для всего вышеописанного была создана отдельная ветка kubespray. Весь код будет храниться там.
 
 
 ---
@@ -125,6 +132,24 @@
 
 1. Git репозиторий с тестовым приложением и Dockerfile.
 2. Регистри с собранным docker image. В качестве регистри может быть DockerHub или [Yandex Container Registry](https://cloud.yandex.ru/services/container-registry), созданный также с помощью terraform.
+
+**Решение**
+
+Создал [git репозиторий](https://github.com/sergeMMikh/diplm-test-application) для тестового приложения.
+
+Структура приложения:
+```
+$ tree
+.
+├── Dockerfile
+├── images
+│   └── murz.jpg
+├── index.html
+└── nginx.conf
+```
+
+Собрал Dоcker образ и отправил на DockerHub в [репоиторий](https://hub.docker.com/repository/docker/sergemmikh/test-app/general).</br>
+![instances](images/Task_3_1.png)</br>
 
 ---
 ### Подготовка cистемы мониторинга и деплой приложения
