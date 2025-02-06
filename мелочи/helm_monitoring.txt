@@ -1,0 +1,92 @@
+curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+chmod 700 get_helm.sh
+./get_helm.sh
+
+
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
+
+helm repo list
+
+helm search repo -l prometheus-community/kube-prometheus-stack | head -3
+
+$ helm search repo -l prometheus-community/kube-prometheus-stack | head -3
+NAME                                            CHART VERSION   APP VERSION     DESCRIPTION
+prometheus-community/kube-prometheus-stack      68.4.5          v0.79.2         kube-prometheus-stack collects Kubernetes manif...
+prometheus-community/kube-prometheus-stack      68.4.4          v0.79.2         kube-prometheus-stack collects Kubernetes manif...
+
+
+helm show values prometheus-community/kube-prometheus-stack --version 68.4.5 > values.yaml
+
+my-values.yaml:
+alertmanager:
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hosts: [alertmanager.demo.com]
+
+grafana:
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hosts: [grafana.demo.com]
+
+prometheus:
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hosts: [prometheus.demo.com]
+
+windowsMonitoring:
+  enabled: false
+
+defaultRules:
+  rules:
+    alertmanager: false
+    etcd: false
+    configReloades: false
+
+helm upgrade --install \
+--namespace monitoring \
+--create-namespace \
+--atomic \
+--timeout 300s \
+--values my-values.yaml \
+prometheus-stack prometheus-community/kube-prometheus-stack --version 68.4.5
+
+
+
+kubectl -n monitoring  get pod
+kubectl -n monitoring  get ingress
+
+echo "192.168.33.101 grafana.demo.com" | sudo tee  --append /etc/hosts
+echo "192.168.33.101 alertmanager.demo.com" | sudo tee  --append /etc/hosts
+echo "192.168.33.101 prometheus.demo.com" | sudo tee  --append /etc/hosts
+
+grep 192.168.33.101 /etc/hosts
+
+
+
+kubectl get pods -n ingress-nginx
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/cloud/deploy.yaml
+kubectl get ingress -n monitoring
+
+для виртуалки:
+kubectl get svc -n ingress-nginx
+echo "192.168.33.101 grafana.demo.com alertmanager.demo.com prometheus.demo.com" | sudo tee -a /etc/hosts
+
+kubectl get deployment -n ingress-nginx ingress-nginx-controller -o yaml > ingress-nginx.yaml
+nano ingress-nginx.yaml
+
+
+
+
+
+kubectl get pods -n ingress-nginx
+
+
+
+kubectl create clusterrolebinding kubelet-admin-binding \
+  --clusterrole=cluster-admin \
+  --user=kube-apiserver-kubelet-client
+
