@@ -72,16 +72,16 @@ output "route_table_private_b_id" {
   value       = module.vpc.route_table_private_b_id
 }
 
-# Security Group (EKS)
-output "security_group_id" {
-  description = "ID Security Group для EKS"
-  value       = module.eks.security_group_id
-}
+# # Security Group (EKS)
+# output "security_group_id" {
+#   description = "ID Security Group для EKS"
+#   value       = module.eks.security_group_id
+# }
 
-output "eks_load_balancer_dns" {
-  description = "DNS адрес Load Balancer для EKS"
-  value       = module.eks.eks_load_balancer_dns
-}
+# output "eks_load_balancer_dns" {
+#   description = "DNS адрес Load Balancer для EKS"
+#   value       = module.eks.eks_load_balancer_dns
+# }
 
 # # Публичные IP worker-нод
 # output "eks_worker_nodes_public_ips" {

@@ -46,7 +46,7 @@ module "ec2" {
 
 module "eks" {
   source     = "./modules/eks"
-  subnet_ids = [module.vpc.public_subnet_a_id, module.vpc.public_subnet_b_id]
+  subnet_ids = module.vpc.private_subnets_id
   vpc_id     = module.vpc.vpc_id
   ami_id     = module.ec2.ubuntu_ami_id
     # Доступ по SSH
