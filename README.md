@@ -127,7 +127,8 @@ capacity_type  = "SPOT"
 ![instances](images/Task_2_2_3.png)</br>
 ![instances](images/Task_2_2_4.png)</br>
 
-
+Произвёл первоначальную настройку *aws eks cli*</br>
+![instances](images/Task_2_2_5.png)</br>
 
 
 ---
@@ -186,6 +187,17 @@ $ tree
 2. Http доступ на 80 порту к web интерфейсу grafana.
 3. Дашборды в grafana отображающие состояние Kubernetes кластера.
 4. Http доступ на 80 порту к тестовому приложению.
+
+**Решение**
+
+Установка сервиса метрик (*metrics-server*) на кластер.</br>
+![instances](images/Task_4_1.png)</br>
+
+используя *helm* установил *prometheus-stack* из *prometheus-community*.</br>
+![instances](images/Task_4_2_.png)</br>
+
+
+
 ---
 ### Установка и настройка CI/CD
 

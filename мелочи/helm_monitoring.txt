@@ -3,6 +3,8 @@ chmod 700 get_helm.sh
 ./get_helm.sh
 
 
+kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 helm repo update
 
@@ -12,11 +14,11 @@ helm search repo -l prometheus-community/kube-prometheus-stack | head -3
 
 $ helm search repo -l prometheus-community/kube-prometheus-stack | head -3
 NAME                                            CHART VERSION   APP VERSION     DESCRIPTION
-prometheus-community/kube-prometheus-stack      68.4.5          v0.79.2         kube-prometheus-stack collects Kubernetes manif...
+prometheus-community/kube-prometheus-stack      69.1.1          v0.80.0         kube-prometheus-stack collects Kubernetes manif...
 prometheus-community/kube-prometheus-stack      68.4.4          v0.79.2         kube-prometheus-stack collects Kubernetes manif...
 
 
-helm show values prometheus-community/kube-prometheus-stack --version 68.4.5 > values.yaml
+helm show values prometheus-community/kube-prometheus-stack --version 69.1.1 > values.yaml
 
 my-values.yaml:
 alertmanager:
@@ -52,12 +54,24 @@ helm upgrade --install \
 --atomic \
 --timeout 300s \
 --values my-values.yaml \
-prometheus-stack prometheus-community/kube-prometheus-stack --version 68.4.5
+prometheus-stack prometheus-community/kube-prometheus-stack --version 69.1.1
+
+grafana:
+  user: admin
+  password: prom-operator
 
 
+kubectl get all -n monitoring
 
 kubectl -n monitoring  get pod
 kubectl -n monitoring  get ingress
+kubectl get svc -n monitoring
+
+https://youtu.be/S41v1lVThds?si=or1uyESvEf096HUM
+
+kubectl port-forward svc/prometheus-stack-kube-prom-prometheus -n monitoring 4001:9090
+kubectl port-forward svc/prometheus-stack-grafana -n monitoring 4002:80
+
 
 echo "192.168.33.101 grafana.demo.com" | sudo tee  --append /etc/hosts
 echo "192.168.33.101 alertmanager.demo.com" | sudo tee  --append /etc/hosts
@@ -85,8 +99,7 @@ nano ingress-nginx.yaml
 kubectl get pods -n ingress-nginx
 
 
-
-kubectl create clusterrolebinding kubelet-admin-binding \
-  --clusterrole=cluster-admin \
-  --user=kube-apiserver-kubelet-client
-
+aws eks update-nodegroup-config \
+    --cluster-name staging-diplom \
+    --nodegroup-name general \
+    --scaling-config minSize=0,maxSize=3,desiredSize=0
