@@ -1,3 +1,35 @@
+data "terraform_remote_state" "bootstrap" {
+  backend = "local"  # Или "s3", если хранишь state в S3
+
+  config = {
+    path = "../bootstrap/terraform.tfstate"  
+  }
+}
+
+variable "s3_bucket_name" {
+  description = "Имя S3 бакета, полученное из bootstrap"
+  type        = string
+  default     = "" 
+}
+
+output "s3_bucket_name_from_bootstrap" {
+  value = data.terraform_remote_state.bootstrap.outputs.s3_bucket_name
+}
+
+module "eks" {
+  source            = "./modules/eks"
+  subnet_ids        = module.vpc.private_subnets
+  vpc_id            = module.vpc.vpc_id
+  ami_id            = module.ec2.ubuntu_ami_id
+  key_name          = var.key_name
+  security_group_id = module.security_group.security_group_id
+
+  eks_role_name       = data.terraform_remote_state.bootstrap.outputs.eks_role_name
+  eks_nodes_role_name = data.terraform_remote_state.bootstrap.outputs.eks_nodes_role_name
+  aws_iam_role_arn    = data.terraform_remote_state.bootstrap.outputs.aws_iam_role_arn
+}
+
+
 module "vpc" {
   source = "./modules/vpc"
 }
@@ -25,31 +57,4 @@ module "security_group" {
 
 module "ec2" {
   source = "./modules/ec2"
-
-  # Доступ по SSH
-  key_name = var.key_name
-
-  # Теги проекта
-  Owner    = var.Owner
-  Project  = var.Project
-  Platform = var.Platform
-
-  # Сеть
-  subnet_ids        = [module.vpc.public_subnet_a_id, module.vpc.public_subnet_b_id]
-  public_subnets_id = module.vpc.public_subnets_id
-  private_subnet_id = module.vpc.private_subnets_id
-  security_group_id = module.vpc.security_group_id
-  vpc_id            = module.vpc.vpc_id
-
-}
-
-
-module "eks" {
-  source     = "./modules/eks"
-  subnet_ids = module.vpc.private_subnets_id
-  vpc_id     = module.vpc.vpc_id
-  ami_id     = module.ec2.ubuntu_ami_id
-    # Доступ по SSH
-  key_name = var.key_name
-  security_group_id = module.vpc.security_group_id
 }

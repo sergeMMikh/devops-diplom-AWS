@@ -1,0 +1,15 @@
+{
+    "Effect": "Allow",
+    "Action": [
+        "s3:GetBucketCORS",
+        "s3:PutBucketCORS",
+        "s3:ListBucket",
+        "s3:GetObject",
+        "s3:PutObject",
+        "s3:GetBucketCORS"
+    ],
+    "Resource": [
+        "arn:aws:s3:::smmikh-dev-dip-2025-store-bucket",
+        "arn:aws:s3:::smmikh-dev-dip-2025-store-bucket/*"
+    ]
+}

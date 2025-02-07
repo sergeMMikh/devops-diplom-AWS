@@ -7,12 +7,12 @@ output "vpc_id" {
 # Public и Private Subnets
 output "public_subnets_id" {
   description = "ID всех публичных подсетей"
-  value       = module.vpc.public_subnets_id
+  value       = module.vpc.public_subnets
 }
 
 output "private_subnets_id" {
   description = "ID всех приватных подсетей"
-  value       = module.vpc.private_subnets_id
+  value       = module.vpc.private_subnets
 }
 
 output "public_subnet_a_id" {
@@ -41,36 +41,36 @@ output "internet_gateway_id" {
   value       = module.vpc.internet_gateway_id
 }
 
-output "nat_gateway_a_id" {
+output "nat_gateway_id" {
   description = "ID NAT Gateway A"
-  value       = module.vpc.nat_gateway_a_id
+  value       = module.vpc.nat_gateway_id
 }
 
-output "nat_gateway_b_id" {
-  description = "ID NAT Gateway B"
-  value       = module.vpc.nat_gateway_b_id
-}
+# output "nat_gateway_b_id" {
+#   description = "ID NAT Gateway B"
+#   value       = module.vpc.nat_gateway_b_id
+# }
 
-# Таблицы маршрутизации
-output "route_table_public_a_id" {
-  description = "ID публичной таблицы маршрутов A"
-  value       = module.vpc.route_table_public_a_id
-}
+# # Таблицы маршрутизации
+# output "route_table_public_a_id" {
+#   description = "ID публичной таблицы маршрутов A"
+#   value       = module.vpc.route_table_public_a_id
+# }
 
-output "route_table_public_b_id" {
-  description = "ID публичной таблицы маршрутов B"
-  value       = module.vpc.route_table_public_b_id
-}
+# output "route_table_public_b_id" {
+#   description = "ID публичной таблицы маршрутов B"
+#   value       = module.vpc.route_table_public_b_id
+# }
 
-output "route_table_private_a_id" {
-  description = "ID приватной таблицы маршрутов A"
-  value       = module.vpc.route_table_private_a_id
-}
+# output "route_table_private_a_id" {
+#   description = "ID приватной таблицы маршрутов A"
+#   value       = module.vpc.route_table_private_a_id
+# }
 
-output "route_table_private_b_id" {
-  description = "ID приватной таблицы маршрутов B"
-  value       = module.vpc.route_table_private_b_id
-}
+# output "route_table_private_b_id" {
+#   description = "ID приватной таблицы маршрутов B"
+#   value       = module.vpc.route_table_private_b_id
+# }
 
 # # Security Group (EKS)
 # output "security_group_id" {

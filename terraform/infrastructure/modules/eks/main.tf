@@ -1,12 +1,9 @@
-resource "aws_iam_role_policy_attachment" "eks" {
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
-  role       = aws_iam_role.eks.name
-}
-
 resource "aws_eks_cluster" "eks" {
-  name     = "${local.env}-${local.eks_name}"
+  # name     = "${local.env}-${local.eks_name}"
+  name = "diplom-claster"
   version  = local.eks_version
-  role_arn = aws_iam_role.eks.arn
+  # role_arn = aws_iam_role.eks.arn
+  role_arn = var.aws_iam_role_arn
 
   vpc_config {
     # endpoint_private_access = false
@@ -21,5 +18,5 @@ resource "aws_eks_cluster" "eks" {
     bootstrap_cluster_creator_admin_permissions = true
   }
 
-  depends_on = [aws_iam_role_policy_attachment.eks]
+  # depends_on = [aws_iam_role_policy_attachment.eks_cluster_policy]
 }

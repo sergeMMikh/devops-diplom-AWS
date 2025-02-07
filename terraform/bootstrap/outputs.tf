@@ -1,4 +1,4 @@
-# ✅ S3 бакет
+
 output "s3_bucket_name" {
   description = "Имя S3 бакета"
   value       = module.s3.s3_bucket_name
@@ -19,3 +19,18 @@ output "s3_bucket_url" {
   value       = module.s3.s3_bucket_url
 }
 
+output "test" {
+  value = "test"  
+}
+
+output "eks_role_name" {
+  value = module.iam.eks_role_name
+}
+
+output "eks_nodes_role_name" {
+  value = module.iam.eks_nodes_role_name
+}
+
+output "aws_iam_role_arn" {
+  value =  module.iam.aws_iam_role_arn  
+}

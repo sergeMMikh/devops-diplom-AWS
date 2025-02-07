@@ -1,5 +1,5 @@
 variable "role_name" {
-  description = "Name of the IAM Role"
+  description = "Name of the IAM Role for EC2"
   type        = string
   default     = "dd-service-role"
 }
@@ -10,8 +10,22 @@ variable "policy_name" {
   default     = "ec2-s3-write-policy"
 }
 
-
 variable "s3_bucket_name" {
+  description = "Name of the S3 bucket"
   type        = string
-  description = "s3 bucket name"
+}
+
+variable "env" {
+  description = "Deployment environment"
+  type        = string
+}
+
+variable "eks_name" {
+  description = "EKS cluster name"
+  type        = string
+}
+
+variable "account_id" {
+  description = "AWS Account ID"
+  type        = string
 }

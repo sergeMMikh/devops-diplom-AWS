@@ -67,9 +67,9 @@
 ![Запись terraform.tfstate в s3 bucket](images/Task_1_1.png)
 
 Сргоасно 6-му пункту заданияиспользуя web-интерфейс AWS убедился что все изменения `terraform destroy` и `terraform apply` проходят успешно.</br>
-Карта VPC с двумя разными зонами доступности</br>
+Карта VPC с двумя разными зонами доступности. Использую только один NAT в целях экономии.</br>
 ![VPC](images/Task_1_2.png)</br>
-Сервисная роль *dd-service-role* </br>
+Сервисные роли *staging-diplom-eks-nodes* и *staging-diplom-eks-cluster*</br>
 ![instances](images/Task_1_4.png)</br>
 
 ---

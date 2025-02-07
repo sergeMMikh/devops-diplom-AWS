@@ -29,3 +29,18 @@ variable "ami_id" {
   description = "Ubuntu AMI ID for EKS worker nodes"
   type        = string
 }
+
+variable "eks_role_name" {
+  description = "IAM Role for EKS Cluster"
+  type        = string
+}
+
+variable "eks_nodes_role_name" {
+  description = "IAM Role for EKS Nodes"
+  type        = string
+}
+
+variable "aws_iam_role_arn" {
+  description = "IAM Role ARN for EKS Cluster"
+  type        = string
+}

@@ -40,4 +40,7 @@ variable "s3_bucket_name" {
   default     = "smmikh-dev-dip-2025-store-bucket"
 }
 
-
+variable "account_id" {
+  description = "AWS Account ID"
+  type        = string
+}
