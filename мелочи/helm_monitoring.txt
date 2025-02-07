@@ -102,4 +102,4 @@ kubectl get pods -n ingress-nginx
 aws eks update-nodegroup-config \
     --cluster-name staging-diplom \
     --nodegroup-name general \
-    --scaling-config minSize=0,maxSize=3,desiredSize=0
+    --scaling-config minSize=1,maxSize=3,desiredSize=1
