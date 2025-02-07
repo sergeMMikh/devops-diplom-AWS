@@ -1,15 +1,15 @@
 data "terraform_remote_state" "bootstrap" {
-  backend = "local"  # Или "s3", если хранишь state в S3
+  backend = "local" # Или "s3", если хранишь state в S3
 
   config = {
-    path = "../bootstrap/terraform.tfstate"  
+    path = "../bootstrap/terraform.tfstate"
   }
 }
 
 variable "s3_bucket_name" {
   description = "Имя S3 бакета, полученное из bootstrap"
   type        = string
-  default     = "" 
+  default     = ""
 }
 
 output "s3_bucket_name_from_bootstrap" {
@@ -57,4 +57,10 @@ module "security_group" {
 
 module "ec2" {
   source = "./modules/ec2"
+}
+
+module "load_balancer" {
+  source     = "./modules/load_balancer"
+  vpc_id     = module.vpc.vpc_id
+  subnet_ids = module.vpc.private_subnets
 }

@@ -46,6 +46,16 @@ output "nat_gateway_id" {
   value       = module.vpc.nat_gateway_id
 }
 
+output "load_balancer_dns_name" {
+  description = "DNS-имя ALB"
+  value       = module.load_balancer.load_balancer_dns_name
+}
+
+output "load_balancer_security_group_id" {
+  description = "ID Security Group для Load Balancer"
+  value       = module.load_balancer.load_balancer_security_group_id
+}
+
 # output "nat_gateway_b_id" {
 #   description = "ID NAT Gateway B"
 #   value       = module.vpc.nat_gateway_b_id

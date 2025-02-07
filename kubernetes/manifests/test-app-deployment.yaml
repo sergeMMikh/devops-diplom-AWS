@@ -19,4 +19,4 @@ spec:
         - name: test-app
           image: sergemmikh/test-app:1.0.0
           ports:
-            - containerPort: 8080
+            - containerPort: 80

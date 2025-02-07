@@ -3,7 +3,12 @@ chmod 700 get_helm.sh
 ./get_helm.sh
 
 
+aws eks update-kubeconfig --region eu-central-1 --name diplom-claster
+kubectl get nodes
+
 kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+
+kubectl get po -n kube-system
 
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 helm repo update
@@ -78,26 +83,6 @@ echo "192.168.33.101 alertmanager.demo.com" | sudo tee  --append /etc/hosts
 echo "192.168.33.101 prometheus.demo.com" | sudo tee  --append /etc/hosts
 
 grep 192.168.33.101 /etc/hosts
-
-
-
-kubectl get pods -n ingress-nginx
-kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/cloud/deploy.yaml
-kubectl get ingress -n monitoring
-
-для виртуалки:
-kubectl get svc -n ingress-nginx
-echo "192.168.33.101 grafana.demo.com alertmanager.demo.com prometheus.demo.com" | sudo tee -a /etc/hosts
-
-kubectl get deployment -n ingress-nginx ingress-nginx-controller -o yaml > ingress-nginx.yaml
-nano ingress-nginx.yaml
-
-
-
-
-
-kubectl get pods -n ingress-nginx
-
 
 aws eks update-nodegroup-config \
     --cluster-name staging-diplom \

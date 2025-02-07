@@ -19,3 +19,6 @@ aws iam update-assume-role-policy --role-name diplom-diplom-claster-eks-cluster 
 
 
 aws iam get-role --role-name diplom-diplom-claster-eks-cluster --query "Role.AssumeRolePolicyDocument"
+
+
+kubectl exec -it -n monitoring test-app-56765d479d-lhpsr -- sh
