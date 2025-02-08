@@ -241,13 +241,37 @@ $ tree
 2. При любом коммите в репозиторие с тестовым приложением происходит сборка и отправка в регистр Docker образа.
 3. При создании тега (например, v1.0.0) происходит сборка и отправка с соответствующим label в регистри, а также деплой соответствующего Docker образа в кластер Kubernetes.
 
----
-## Что необходимо для сдачи задания?
+**Решение**
 
-1. Репозиторий с конфигурационными файлами Terraform и готовность продемонстрировать создание всех ресурсов с нуля.
-2. Пример pull request с комментариями созданными atlantis'ом или снимки экрана из Terraform Cloud или вашего CI-CD-terraform pipeline.
-3. Репозиторий с конфигурацией ansible, если был выбран способ создания Kubernetes кластера при помощи ansible.
-4. Репозиторий с Dockerfile тестового приложения и ссылка на собранный docker image.
-5. Репозиторий с конфигурацией Kubernetes кластера.
-6. Ссылка на тестовое приложение и веб интерфейс Grafana с данными доступа.
-7. Все репозитории рекомендуется хранить на одном ресурсе (github, gitlab)
+В [репозитории с тестовым приложением](https://github.com/sergeMMikh/diplm-test-application) создал папку [*.github/workflows*](https://github.com/sergeMMikh/diplm-test-application/tree/main/.github/workflows) с описание шагов:
+- *integration*- автоматическая сборка образа приложения и его отправка в репозиторий [DockerHub](https://hub.docker.com) *sergemmikh/test-app*
+- *deployment*: обновление образа в поде *test-app* моего кластера * diplom-claste*
+
+Согласно задани, обновление должно происходить только при появлении нового *tag* в репозитории. За это отвечает директива
+```
+on:
+  push:
+      tags:        
+      - '*'
+```
+Процесс выполнения pipline:</br> 
+![prometheus](images/Task_5_3.png)</br>
+
+История обновления development до и после работы pipline:</br> 
+![prometheus](images/Task_5_2.png)</br>
+
+
+---
+## Итог
+
+1. [Репозиторий с конфигурационными файлами Terraform](terraform).
+
+2. Процесс выполнения pipline:</br> 
+![prometheus](images/Task_5_3.png)
+3. Репозиторий с конфигурацией ansible, если был выбран способ создания Kubernetes кластера при помощи отсутствует, остались только файлы переменных [my-values.yaml](kubernetes\my-values.yaml) и [values.yaml](kubernetes\values.yaml). Полное описание процесса и причин отказа от kubespray можно найти в [README.md](https://github.com/sergeMMikh/devops-diplom-AWS/blob/kubespray/README.md)
+4. [Репозиторий с Dockerfile](https://hub.docker.com/repository/docker/sergemmikh/test-app/general) тестового приложения и [ссылка на собранный docker image](https://hub.docker.com/repository/docker/sergemmikh/test-app/tags/v1.0.3/sha256-d54a08b6a6cedb32799d2d20b9f2eda74f0e3a8fa36dc1f562f960273537d966).
+5. [Репозиторий с конфигурацией Kubernetes кластера](kubernetes\manifests).
+6. Ссылки на [тестовое приложение](http://app.crystalpuzzles.pt/app) и [веб интерфейс Grafana](http://grafana.crystalpuzzles.pt/). Данные доступа:
+- user: admin
+- password: prom-operator.
+7. Все репозитории рекомендуется хранятся на одном ресурсе [github](https://github.com/sergeMMikh).
