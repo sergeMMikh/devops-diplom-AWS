@@ -13,7 +13,7 @@ resource "aws_lb_target_group" "ingress_tg" {
   protocol = "HTTP"
   vpc_id   = var.vpc_id
   #   target_type = "instance"
-  target_type = "id"
+  target_type = "ip"
 
   health_check {
     path                = "/"
