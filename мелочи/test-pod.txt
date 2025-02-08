@@ -32,4 +32,8 @@ curl -vk -H "Host: prometheus.demo.com" http://10.10.20.135:32703/prometheus
 curl -vk -H "Host: app.demo.com" http://10.10.20.135:32703/app
 
 
-
+curl -I http://a530030b2749b44a8b813433c3547794-1820348966.eu-central-1.elb.amazonaws.com/grafana
+curl -I http://a530030b2749b44a8b813433c3547794-1820348966.eu-central-1.elb.amazonaws.com/grafana/login
+curl -I http://a530030b2749b44a8b813433c3547794-1820348966.eu-central-1.elb.amazonaws.com/prometheus
+curl -vk -H "Host: app.demo.com" http://a530030b2749b44a8b813433c3547794-1820348966.eu-central-1.elb.amazonaws.com/app
+curl -I http://a530030b2749b44a8b813433c3547794-1820348966.eu-central-1.elb.amazonaws.com/app/images/murz.jpg
