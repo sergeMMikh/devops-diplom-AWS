@@ -206,6 +206,9 @@ $ tree
 Для проброса сервисов в интерернет написал [*ingfess*](kubernetes/manifests/aws-alb-ingress.yaml). Получил внешнее DNS имя.</br>
 ![ingfess](images/Task_4_5.png)</br> 
 
+Автоматически поднялся *load balancer* в трёх зонах доступности.</br>
+![ingfess](images/Task_4_8.png)</br> 
+
 Сделал соответсвующие А-записи для своего доиена</br>
 ![a](images/Task_4_6_1.png)</br> </br>
 ![a](images/Task_4_6_2.png)</br> 
