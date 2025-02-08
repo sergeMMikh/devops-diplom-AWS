@@ -165,7 +165,7 @@ $ tree
 ```
 
 Собрал Dоcker образ и отправил на DockerHub в [репоиторий](https://hub.docker.com/repository/docker/sergemmikh/test-app/general).</br>
-![instances](images/Task_3_1.png)</br>
+![Dоcker](images/Task_3_1.png)</br>
 
 ---
 ### Подготовка cистемы мониторинга и деплой приложения
@@ -191,11 +191,33 @@ $ tree
 **Решение**
 
 Установка сервиса метрик (*metrics-server*) на кластер.</br>
-![instances](images/Task_4_1.png)</br>
+![metrics-server](images/Task_4_1.png)</br>
 
 используя *helm* установил *prometheus-stack* из *prometheus-community*.</br>
-![instances](images/Task_4_2_.png)</br>
+![prometheus-stack](images/Task_4_2_.png)</br>
 
+Написал [*deployment*](kubernetes/manifests/test-app-deployment.yaml) [*service*](kubernetes/manifests/test-app-service.yaml) для деплоя приложения.
+
+С *grafana* возникли небольште трудности, пришлось добавить отдельный [сервис](kubernetes/manifests/grafana-service.yaml) для работы с 3000 портом.
+
+Итоговый список сервисов.</br>
+![list](images/Task_4_4.png)</br>
+
+Для проброса сервисов в интерернет написал [*ingfess*](kubernetes/manifests/aws-alb-ingress.yaml). Получил внешнее DNS имя.</br>
+![ingfess](images/Task_4_5.png)</br> 
+
+Сделал соответсвующие А-записи для своего доиена</br>
+![a](images/Task_4_6_1.png)</br> </br>
+![a](images/Task_4_6_2.png)</br> 
+
+В итоге сервисы доступны по адресам:
+- тестовое приложение: *http://app.crystalpuzzles.pt/app*
+- grafana: *http://grafana.crystalpuzzles.pt/*
+- prometheus: *http://prometheus.crystalpuzzles.pt/*
+</br>
+![app](images/Task_4_7_1.png)</br> 
+![grafana](images/Task_4_7_2.png)</br> 
+![prometheus](images/Task_4_7_3.png)</br> 
 
 
 ---
