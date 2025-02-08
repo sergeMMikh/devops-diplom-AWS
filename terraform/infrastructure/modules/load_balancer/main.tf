@@ -8,11 +8,12 @@ resource "aws_lb" "ingress_alb" {
 }
 
 resource "aws_lb_target_group" "ingress_tg" {
-  name        = "eks-ingress-tg"
-  port        = 80
-  protocol    = "HTTP"
-  vpc_id      = var.vpc_id
-  target_type = "instance"
+  name     = "eks-ingress-tg"
+  port     = 80
+  protocol = "HTTP"
+  vpc_id   = var.vpc_id
+  #   target_type = "instance"
+  target_type = "id"
 
   health_check {
     path                = "/"
