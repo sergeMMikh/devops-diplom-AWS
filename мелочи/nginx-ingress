@@ -1,75 +1,131 @@
-helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-helm repo update
-helm install ingress-nginx ingress-nginx/ingress-nginx --namespace kube-system
-
-kubectl get pods -n kube-system | grep ingress-nginx
-kubectl get svc -n kube-system | grep ingress-nginx
+aws ec2 describe-subnets --filters "Name=vpc-id,Values=vpc-0cac0f11d0151397e" --query 'Subnets[*].[SubnetId,Tags]'
 
 
-kubectl get pods -n ingress-nginx
-kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/cloud/deploy.yaml
-kubectl get ingress -n monitoring
-
-для виртуалки:
-kubectl get svc -n ingress-nginx
-echo "192.168.33.101 grafana.demo.com alertmanager.demo.com prometheus.demo.com" | sudo tee -a /etc/hosts
-
-kubectl get deployment -n ingress-nginx ingress-nginx-controller -o yaml > ingress-nginx.yaml
-nano ingress-nginx.yaml
+aws ec2 create-tags --resources subnet-0984fbcdca8678b52 subnet-0e87f786b9fc2e313 subnet-0ce5c79d1efc09a82 --tags Key=kubernetes.io/role/elb,Value=1
+aws ec2 create-tags --resources subnet-06c6638c5a3c4c222 subnet-0d6aa8abc548df067 subnet-0d0d7e20770e00191 --tags Key=kubernetes.io/role/internal-elb,Value=1
 
 
-kubectl get pods -n ingress-nginx
+vpc-0cac0f11d0151397e
 
+aws ec2 create-tags --resources subnet-0984fbcdca8678b52 \
+    --tags Key=kubernetes.io/cluster/diplom-claster,Value=owned
+
+aws ec2 create-tags --resources subnet-0e87f786b9fc2e313 \
+    --tags Key=kubernetes.io/cluster/diplom-claster,Value=owned
+
+aws ec2 create-tags --resources subnet-0ce5c79d1efc09a82 \
+    --tags Key=kubernetes.io/cluster/diplom-claster,Value=owned
+
+aws ec2 create-tags --resources subnet-06c6638c5a3c4c222 \
+    --tags Key=kubernetes.io/cluster/diplom-claster,Value=owned
+aws ec2 create-tags --resources subnet-0d6aa8abc548df067 \
+    --tags Key=kubernetes.io/cluster/diplom-claster,Value=owned
+aws ec2 create-tags --resources subnet-0d0d7e20770e00191 \
+    --tags Key=kubernetes.io/cluster/diplom-claster,Value=owned
+
+subnet-0984fbcdca8678b52
+subnet-0e87f786b9fc2e313
+subnet-0ce5c79d1efc09a82
+
+subnet-06c6638c5a3c4c222
+subnet-0d6aa8abc548df067	
+subnet-0d0d7e20770e00191
 
 helm repo add eks https://aws.github.io/eks-charts
 helm repo update
-helm install aws-load-balancer-controller eks/aws-load-balancer-controller \
-    --namespace kube-system \
-    --set clusterName=diplom-claster \
-    --set serviceAccount.create=false \
-    --set serviceAccount.name=aws-load-balancer-controller
 
-helm install aws-load-balancer-controller eks/aws-load-balancer-controller \
-    -n kube-system \
-    --set clusterName=diplom-claster \
-    --set serviceAccount.create=false \
-    --set serviceAccount.name=aws-load-balancer-controller
-
-curl -O https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.11.0/docs/install/iam_policy.json
-aws iam create-policy --policy-name AWSLoadBalancerControllerIAMPolicy --policy-document file://iam_policy.json
-
-eksctl utils associate-iam-oidc-provider --cluster=diplom-claster --approve
-
-
-$ eksctl create iamserviceaccount \
-    --cluster=diplom-claster \
-    --namespace=kube-system \
-    --name=aws-load-balancer-controller \
-    --role-name AmazonEKSLoadBalancerControllerRole \
-    --attach-policy-arn=arn:aws:iam::1335-0075-9208:policy/AWSLoadBalancerControllerIAMPolicy \
-    --approve
-
-
-vpc-0eeef6f879c21ad6d
-
-helm install aws-load-balancer-controller eks/aws-load-balancer-controller \
+helm upgrade --install aws-load-balancer-controller eks/aws-load-balancer-controller \
     -n kube-system \
     --set clusterName=diplom-claster \
     --set serviceAccount.create=false \
     --set serviceAccount.name=aws-load-balancer-controller \
-    --set region=eu-central-1 \
-    --set vpcId=vpc-0eeef6f879c21ad6d
+    --set region=eu-central-1
 
 
-$ aws elbv2 describe-target-groups --names eks-ingress-tg --query "TargetGroups[*].TargetType"
+
+kubectl apply -f manifests/aws-alb-ingress.yaml
+
+kubectl create serviceaccount aws-load-balancer-controller -n kube-system
+kubectl get sa -n kube-system | grep aws-load-balancer
+eksctl utils associate-iam-oidc-provider --region=eu-central-1 --cluster=diplom-claster --approve
+aws eks describe-cluster --name diplom-claster --query "cluster.identity.oidc.issuer" --output text
+
+eksctl create iamserviceaccount \
+    --cluster=diplom-claster \
+    --namespace=kube-system \
+    --name=aws-load-balancer-controller \
+    --role-name AmazonEKSLoadBalancerControllerRole \
+    --attach-policy-arn arn:aws:iam::133500759208:policy/AWSLoadBalancerControllerIAMPolicy \
+    --approve
+
+kubectl debug node/ip-10-10-20-135.eu-central-1.compute.internal --image=busybox --namespace=kube-system -- bash
+
+
+kubectl run -it --rm --restart=Never --image=busybox test -- sh
+
+aws ec2 describe-instances --instance-ids i-0c0a12cb6d82d6bfb --query "Reservations[*].Instances[*].MetadataOptions"
+
+
+aws ec2 describe-security-groups --group-ids sgr-02a1fdc4ce456e870
+
+aws ec2 modify-instance-metadata-options \
+    --instance-id i-0c0a12cb6d82d6bfb \
+    --http-endpoint enabled \
+    --http-tokens optional
+
+
+$ aws elbv2 describe-load-balancers --query "LoadBalancers[*].[LoadBalancerName,SecurityGroups]"
 [
-"instance"
+[
+"eks-ingress-alb",
+[
+"sg-0d8b2d718fde82519"
+]
+],
+[
+"k8s-monitori-monitori-8a3b603681",
+[
+"sg-07a363a42b22ff3de",
+"sg-0d6a8cccbd81361f4"
+]
+]
 ]
 
-resource "aws_lb_target_group" "ingress_tg" {
-name        = "eks-ingress-tg"
-port        = 80
-protocol    = "HTTP"
-vpc_id      = var.vpc_id
-target_type = "ip"  # <--- поменять с "instance" на "ip"
-}
+aws ec2 describe-security-groups --group-ids sg-0d8b2d718fde82519
+
+
+kubectl edit svc prometheus-stack-grafana -n monitoring
+
+aws elbv2 describe-target-groups --query "TargetGroups[*].[TargetGroupName,Port,TargetType,LoadBalancerArns]"
+
+aws elbv2 describe-target-health --target-group-arn arn:aws:elasticloadbalancing:eu-central-1:133500759208:targetgroup/eks-ingress-tg/a07284ef98abb178
+aws elbv2 describe-target-health --target-group-arn arn:aws:elasticloadbalancing:eu-central-1:133500759208:targetgroup/k8s-monitori-promethe-4da8c3eb3a/a96f482facc0dcd7
+aws elbv2 describe-target-health --target-group-arn arn:aws:elasticloadbalancing:eu-central-1:133500759208:targetgroup/k8s-monitori-promethe-bbff43c7c9/5429f3dadc19a2d6
+aws elbv2 describe-target-health --target-group-arn arn:aws:elasticloadbalancing:eu-central-1:133500759208:targetgroup/k8s-monitori-testapp-75d2723ae1/2234474173b1cbcb
+
+aws elbv2 describe-target-health --target-group-arn arn:aws:elasticloadbalancing:eu-central-1:133500759208:targetgroup/eks-ingress-tg/a07284ef98abb178
+aws elbv2 describe-target-health --target-group-arn arn:aws:elasticloadbalancing:eu-central-1:133500759208:targetgroup/k8s-monitori-promethe-4da8c3eb3a/5d962bb6c0ab59f0
+aws elbv2 describe-target-health --target-group-arn arn:aws:elasticloadbalancing:eu-central-1:133500759208:targetgroup/k8s-monitori-promethe-bbff43c7c9/d08e5c993d3a37ec
+aws elbv2 describe-target-health --target-group-arn arn:aws:elasticloadbalancing:eu-central-1:133500759208:targetgroup/k8s-monitori-testapp-75d2723ae1/52eb58a3a426954d
+
+
+
+NAME                                                     READY   STATUS    RESTARTS   AGE     IP             NODE                                            NOMINATED NODE   READINESS GATES
+alertmanager-prometheus-stack-kube-prom-alertmanager-0   2/2     Running   0          4h40m   10.10.20.184   ip-10-10-20-135.eu-central-1.compute.internal   <none>           <none>
+prometheus-prometheus-stack-kube-prom-prometheus-0       2/2     Running   0          4h40m   10.10.20.167   ip-10-10-20-135.eu-central-1.compute.internal   <none>           <none>
+prometheus-stack-grafana-5bfb7986d-md69q                 3/3     Running   0          4h40m   10.10.20.207   ip-10-10-20-135.eu-central-1.compute.internal   <none>           <none>
+prometheus-stack-kube-prom-operator-95dbcd7c7-45vfc      1/1     Running   0          4h40m   10.10.20.168   ip-10-10-20-135.eu-central-1.compute.internal   <none>           <none>
+prometheus-stack-kube-state-metrics-9859f6bb5-nwwd6      1/1     Running   0          4h40m   10.10.20.127   ip-10-10-20-135.eu-central-1.compute.internal   <none>           <none>
+prometheus-stack-prometheus-node-exporter-c858s          1/1     Running   0          4h40m   10.10.20.135   ip-10-10-20-135.eu-central-1.compute.internal   <none>           <none>
+test-app-8566dfdd8b-m8fnl                                1/1     Running   0          4h36m   10.10.20.85    ip-10-10-20-135.eu-central-1.compute.internal   <none>           <none>
+
+NAME                                        TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)                      AGE     SELECTOR
+alertmanager-operated                       ClusterIP   None             <none>        9093/TCP,9094/TCP,9094/UDP   4h44m   app.kubernetes.io/name=alertmanager
+prometheus-operated                         ClusterIP   None             <none>        9090/TCP                     4h44m   app.kubernetes.io/name=prometheus
+prometheus-stack-grafana                    ClusterIP   172.20.251.36    <none>        80/TCP                       4h44m   app.kubernetes.io/instance=prometheus-stack,app.kubernetes.io/name=grafana
+prometheus-stack-kube-prom-alertmanager     ClusterIP   172.20.169.59    <none>        9093/TCP,8080/TCP            4h44m   alertmanager=prometheus-stack-kube-prom-alertmanager,app.kubernetes.io/name=alertmanager
+prometheus-stack-kube-prom-operator         ClusterIP   172.20.5.112     <none>        443/TCP                      4h44m   app=kube-prometheus-stack-operator,release=prometheus-stack
+prometheus-stack-kube-prom-prometheus       ClusterIP   172.20.133.62    <none>        9090/TCP,8080/TCP            4h44m   app.kubernetes.io/name=prometheus,operator.prometheus.io/name=prometheus-stack-kube-prom-prometheus
+prometheus-stack-kube-state-metrics         ClusterIP   172.20.223.120   <none>        8080/TCP                     4h44m   app.kubernetes.io/instance=prometheus-stack,app.kubernetes.io/name=kube-state-metrics
+prometheus-stack-prometheus-node-exporter   ClusterIP   172.20.83.18     <none>        9100/TCP                     4h44m   app.kubernetes.io/instance=prometheus-stack,app.kubernetes.io/name=prometheus-node-exporter
+test-app                                    ClusterIP   172.20.228.138   <none>        80/TCP                       4h40m   app=test-app

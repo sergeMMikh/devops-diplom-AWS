@@ -1,16 +1,14 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: ingress
+  name: monitoring-ingress
   namespace: monitoring
   annotations:
-    kubernetes.io/ingress.class: "alb"
-    alb.ingress.kubernetes.io/scheme: "internet-facing"
-    alb.ingress.kubernetes.io/target-type: "ip"
-    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
+    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
+  ingressClassName: nginx
   rules:
-    - host: eks-ingress-alb-1575329207.eu-central-1.elb.amazonaws.com
+    - host: monitoring.demo.com
       http:
         paths:
           - path: /grafana

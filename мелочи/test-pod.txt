@@ -1,0 +1,35 @@
+kubectl exec -it test-node-d947f6768-crfdb -n monitoring -- sh
+
+$ kubectl describe ingress monitoring-ingress -n monitoring
+Name:             monitoring-ingress
+Labels:           <none>
+Namespace:        monitoring
+Address:          172.20.6.116
+Ingress Class:    nginx
+Default backend:  <default>
+Rules:
+  Host                 Path  Backends
+  ----                 ----  --------
+  grafana.demo.com
+                       /grafana   prometheus-stack-grafana:80 (10.10.20.207:80)
+  prometheus.demo.com
+                       /prometheus   prometheus-stack-kube-prom-prometheus:9090 (10.10.20.167:9090)
+  app.demo.com
+                       /app   test-app:80 (10.10.20.85:80)
+Annotations:           nginx.ingress.kubernetes.io/rewrite-target: /
+Events:
+  Type    Reason  Age               From                      Message
+  ----    ------  ----              ----                      -------
+  Normal  Sync    6s (x2 over 11s)  nginx-ingress-controller  Scheduled for sync
+
+$ kubectl get nodes -o wide
+NAME                                            STATUS   ROLES    AGE   VERSION               INTERNAL-IP    EXTERNAL-IP   OS-IMAGE
+  KERNEL-VERSION                    CONTAINER-RUNTIME
+ip-10-10-20-135.eu-central-1.compute.internal   Ready    <none>   8h    v1.31.4-eks-aeac579   10.10.20.135   <none>        Amazon Linux 2023.6.20250128   6.1.124-134.200.amzn2023.x86_64   containerd://1.7.25
+
+curl -vk -H "Host: grafana.demo.com" http://10.10.20.135:32703/grafana
+curl -vk -H "Host: prometheus.demo.com" http://10.10.20.135:32703/prometheus
+curl -vk -H "Host: app.demo.com" http://10.10.20.135:32703/app
+
+
+

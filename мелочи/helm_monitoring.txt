@@ -76,6 +76,7 @@ https://youtu.be/S41v1lVThds?si=or1uyESvEf096HUM
 
 kubectl port-forward svc/prometheus-stack-kube-prom-prometheus -n monitoring 4001:9090
 kubectl port-forward svc/prometheus-stack-grafana -n monitoring 4002:80
+kubectl port-forward svc/test-app -n monitoring 4001:80
 
 
 echo "192.168.33.101 grafana.demo.com" | sudo tee  --append /etc/hosts
@@ -88,3 +89,6 @@ aws eks update-nodegroup-config \
     --cluster-name staging-diplom \
     --nodegroup-name general \
     --scaling-config minSize=1,maxSize=3,desiredSize=1
+
+
+    
