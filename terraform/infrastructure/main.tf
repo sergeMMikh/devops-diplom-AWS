@@ -40,17 +40,7 @@ module "security_group" {
   allowed_ingress_ports = [
     22,
     80,
-    443,
-    6443,
-    2379,
-    2380,
-    8080,
-    10250,
-    10251,
-    10252,
-    30000,
-    32767,
-    10248
+    443
   ]
   allowed_cidr_blocks = ["0.0.0.0/0"]
 }
