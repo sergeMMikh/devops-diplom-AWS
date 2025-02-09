@@ -1,17 +1,5 @@
 # Дипломный практикум в Yandex.Cloud - Сергей Михалёв.
-  * [Цели:](#цели)
-  * [Этапы выполнения:](#этапы-выполнения)
-     * [Создание облачной инфраструктуры](#создание-облачной-инфраструктуры)
-     * [Создание Kubernetes кластера](#создание-kubernetes-кластера)
-     * [Создание тестового приложения](#создание-тестового-приложения)
-     * [Подготовка cистемы мониторинга и деплой приложения](#подготовка-cистемы-мониторинга-и-деплой-приложения)
-     * [Установка и настройка CI/CD](#установка-и-настройка-cicd)
-  * [Что необходимо для сдачи задания?](#что-необходимо-для-сдачи-задания)
-  * [Как правильно задавать вопросы дипломному руководителю?](#как-правильно-задавать-вопросы-дипломному-руководителю)
 
-**Перед началом работы над дипломным заданием изучите [Инструкция по экономии облачных ресурсов](https://github.com/netology-code/devops-materials/blob/master/cloudwork.MD).**
-
----
 ## Цели:
 
 1. Подготовить облачную инфраструктуру на базе облачного провайдера Яндекс.Облако.
@@ -62,12 +50,14 @@
    - [ec2](terraform/infrastructure/modules/ec2/)- модуль инстансов
    - [vpc](terraform/infrastructure/modules/vpc/)- сети
    - [sequrity_group](terraform/infrastructure/modules/security_group/)- настройка сетевого взаимодеёствия инстансов.
+   - [eks](terraform\infrastructure\modules\eks)- Elastic Kubernetes Service- альтернативное решение для развёртки кластера.
+   - [load_balancer](terraform\infrastructure\modules\load_balancer)- балансировщик нагрузки кластера.
 
-При помощи записи *backend "s3"* в файле [backend.tf](terraform/infrastructure/backend.tf) настроил сохранение *terraform.tfstate* в s3 bucket.</br>
+При помощи записи *backend "s3"* в файле [*backend.tf*](terraform/infrastructure/backend.tf) настроил сохранение *terraform.tfstate* в s3 bucket.</br>
 ![Запись terraform.tfstate в s3 bucket](images/Task_1_1.png)
 
 Сргоасно 6-му пункту заданияиспользуя web-интерфейс AWS убедился что все изменения `terraform destroy` и `terraform apply` проходят успешно.</br>
-Карта VPC с двумя разными зонами доступности. Использую только один NAT в целях экономии.</br>
+Карта VPC с тремя разными зонами доступности. Использую только один NAT в целях экономии.</br>
 ![VPC](images/Task_1_2.png)</br>
 Сервисные роли *staging-diplom-eks-nodes* и *staging-diplom-eks-cluster*</br>
 ![instances](images/Task_1_4.png)</br>
@@ -206,10 +196,10 @@ $ tree
 Для проброса сервисов в интерернет написал [*ingfess*](kubernetes/manifests/aws-alb-ingress.yaml). Получил внешнее DNS имя.</br>
 ![ingfess](images/Task_4_5.png)</br> 
 
-Автоматически поднялся *load balancer* в трёх зонах доступности.</br>
+*load balancer* в трёх зонах доступности.</br>
 ![ingfess](images/Task_4_8.png)</br> 
 
-Сделал соответсвующие А-записи для своего доиена</br>
+Сделал соответсвующие А-записи для своего домена *crystalpuzzles.pt*.</br>
 ![a](images/Task_4_6_1.png)</br> </br>
 ![a](images/Task_4_6_2.png)</br> 
 
@@ -218,6 +208,7 @@ $ tree
 - grafana: *http://grafana.crystalpuzzles.pt/*
 - prometheus: *http://prometheus.crystalpuzzles.pt/*
 </br>
+
 ![app](images/Task_4_7_1.png)</br> 
 ![grafana](images/Task_4_7_2.png)</br> 
 ![prometheus](images/Task_4_7_3.png)</br> 
@@ -245,7 +236,7 @@ $ tree
 
 В [репозитории с тестовым приложением](https://github.com/sergeMMikh/diplm-test-application) создал папку [*.github/workflows*](https://github.com/sergeMMikh/diplm-test-application/tree/main/.github/workflows) с описание шагов:
 - *integration*- автоматическая сборка образа приложения и его отправка в репозиторий [DockerHub](https://hub.docker.com) *sergemmikh/test-app*
-- *deployment*: обновление образа в поде *test-app* моего кластера * diplom-claste*
+- *deployment*: обновление образа в поде *test-app* моего кластера *diplom-claster*
 
 Согласно задани, обновление должно происходить только при появлении нового *tag* в репозитории. За это отвечает директива
 ```
