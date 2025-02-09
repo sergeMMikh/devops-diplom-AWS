@@ -1,7 +1,6 @@
 resource "aws_eks_cluster" "eks" {
-  # name     = "${local.env}-${local.eks_name}"
-  name = "diplom-claster"
-  version  = local.eks_version
+  name    = "${local.env}-${local.eks_name}"
+  version = local.eks_version
   # role_arn = aws_iam_role.eks.arn
   role_arn = var.aws_iam_role_arn
 
@@ -18,5 +17,4 @@ resource "aws_eks_cluster" "eks" {
     bootstrap_cluster_creator_admin_permissions = true
   }
 
-  # depends_on = [aws_iam_role_policy_attachment.eks_cluster_policy]
 }

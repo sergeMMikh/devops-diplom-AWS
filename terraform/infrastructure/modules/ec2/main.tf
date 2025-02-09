@@ -20,7 +20,7 @@ locals {
 }
 
 
-# # 🔹 Master Node (1 инстанс)
+# #  Master Node (1 инстанс)
 # resource "aws_instance" "master_node" {
 #   ami             = data.aws_ami.ubuntu.id
 #   instance_type   = var.master_instance_type
@@ -43,7 +43,7 @@ locals {
 #   }
 # }
 
-# # 🔹 Worker Nodes (2 инстанса)
+# #  Worker Nodes (2 инстанса)
 # resource "aws_instance" "worker_nodes" {
 #   count           = 2
 #   ami             = data.aws_ami.ubuntu.id
