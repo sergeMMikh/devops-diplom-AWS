@@ -259,7 +259,7 @@ on:
 
 2. Процесс выполнения pipline:</br> 
 ![prometheus](images/Task_5_3.png)
-3. Репозиторий с конфигурацией ansible, если был выбран способ создания Kubernetes кластера при помощи отсутствует, остались только файлы переменных [my-values.yaml](kubernetes\my-values.yaml) и [values.yaml](kubernetes\values.yaml). Полное описание процесса и причин отказа от kubespray можно найти в [README.md](https://github.com/sergeMMikh/devops-diplom-AWS/blob/kubespray/README.md)
+3. Репозиторий с конфигурацией ansible, если был выбран способ создания Kubernetes кластера при помощи отсутствует. Полное описание процесса и причин отказа от kubespray можно найти в [README.md](https://github.com/sergeMMikh/devops-diplom-AWS/blob/kubespray/README.md)
 4. [Репозиторий с Dockerfile](https://hub.docker.com/repository/docker/sergemmikh/test-app/general) тестового приложения и [ссылка на собранный docker image](https://hub.docker.com/repository/docker/sergemmikh/test-app/tags/v1.0.3/sha256-d54a08b6a6cedb32799d2d20b9f2eda74f0e3a8fa36dc1f562f960273537d966).
 5. [Репозиторий с конфигурацией Kubernetes кластера](kubernetes\manifests).
 6. Ссылки на [тестовое приложение](http://app.crystalpuzzles.pt/app) и [веб интерфейс Grafana](http://grafana.crystalpuzzles.pt/). Данные доступа:
