@@ -1,8 +1,8 @@
 output "public_subnets" {
   description = "Список ID публичных подсетей"
   value = [
-    aws_subnet.public_a_4dd.id, 
-    aws_subnet.public_b_4dd.id, 
+    aws_subnet.public_a_4dd.id,
+    aws_subnet.public_b_4dd.id,
     aws_subnet.public_c_4dd.id
   ]
 }
@@ -10,8 +10,8 @@ output "public_subnets" {
 output "private_subnets" {
   description = "Список ID приватных подсетей"
   value = [
-    aws_subnet.private_a_4dd.id, 
-    aws_subnet.private_b_4dd.id, 
+    aws_subnet.private_a_4dd.id,
+    aws_subnet.private_b_4dd.id,
     aws_subnet.private_c_4dd.id
   ]
 }
@@ -75,3 +75,15 @@ output "private_subnet_c_id" {
   description = "ID приватной подсети C"
   value       = aws_subnet.private_c_4dd.id
 }
+
+# # Оптимизированный вариант:
+# output "public_subnet_ids" {
+#   description = "ID всех публичных подсетей"
+#   value       = { for k, v in aws_subnet.public : k => v.id }
+# }
+
+# output "private_subnet_ids" {
+#   description = "ID всех приватных подсетей"
+#   value       = { for k, v in aws_subnet.private : k => v.id }
+# }
+

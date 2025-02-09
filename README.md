@@ -56,7 +56,7 @@
 При помощи записи *backend "s3"* в файле [*backend.tf*](terraform/infrastructure/backend.tf) настроил сохранение *terraform.tfstate* в s3 bucket.</br>
 ![Запись terraform.tfstate в s3 bucket](images/Task_1_1.png)
 
-Сргоасно 6-му пункту заданияиспользуя web-интерфейс AWS убедился что все изменения `terraform destroy` и `terraform apply` проходят успешно.</br>
+Сргоасно 6-му пункту задания используя web-интерфейс AWS убедился что все изменения `terraform destroy` и `terraform apply` проходят успешно.</br>
 Карта VPC с тремя разными зонами доступности. Использую только один NAT в целях экономии.</br>
 ![VPC](images/Task_1_2.png)</br>
 Сервисные роли *staging-diplom-eks-nodes* и *staging-diplom-eks-cluster*</br>
@@ -87,7 +87,7 @@
 
 *kubespray*
 
-В соответствии с рекомендациями задания я пробовал использовать для поднятия кластера *kubespray*. К сожалею, по независящим от меня причинам, полученный кластер оказался неустойчив, и я решил что он непригоден для следующих этапов дипломной работы. Эту ситуацию я описал в отдельной ветке *kubespray* в [README.md](https://github.com/sergeMMikh/devops-diplom-AWS/blob/kubespray/README.md). Было решено воспользоваться вторым способом установки кластера.
+В соответствии с рекомендациями задания я пробовал использовать для поднятия кластера ansible с пакетом *kubespray*. К сожалею, по независящим от меня причинам, полученный кластер оказался неустойчив, и я решил что он непригоден для следующих этапов дипломной работы. Эту ситуацию я описал в отдельной ветке *kubespray* в [README.md](https://github.com/sergeMMikh/devops-diplom-AWS/blob/kubespray/README.md). Было решено воспользоваться вторым предложенным способом установки кластера- специализированными ресурсами облачного провайдера.
 
 
 *EKS*
@@ -110,14 +110,14 @@ capacity_type  = "SPOT"
 В результате запуска terraform поднялся кластер</br>
 ![instances](images/Task_2_2_1.png)</br>
 
-В качестке ноды поднялась виртуальная машина соответствующего типа в рамках одной из доступных зон.</br>
+В качестке ноды поднялась виртуальная машина типа *"t3.large"* в рамках одной из доступных зон.</br>
 ![instances](images/Task_2_2_2.png)</br>
 
-Создалась *Auto Scaling group*</br>
+Создалась *Auto Scaling group* в трёх подсетях в трёх зонах доступности </br>
 ![instances](images/Task_2_2_3.png)</br>
 ![instances](images/Task_2_2_4.png)</br>
 
-Произвёл первоначальную настройку *aws eks cli*</br>
+Произвёл первоначальную настройку *aws eks cli* для работы с ресурсами облачного провайдера.</br>
 ![instances](images/Task_2_2_5.png)</br>
 
 
@@ -186,9 +186,9 @@ $ tree
 используя *helm* установил *prometheus-stack* из *prometheus-community*.</br>
 ![prometheus-stack](images/Task_4_2_.png)</br>
 
-Написал [*deployment*](kubernetes/manifests/test-app-deployment.yaml) [*service*](kubernetes/manifests/test-app-service.yaml) для деплоя приложения.
+Написал [*deployment*](kubernetes/manifests/test-app-deployment.yaml) [*service*](kubernetes/manifests/test-app-service.yaml) для деплоя моего тестового приложения.
 
-С *grafana* возникли небольште трудности, пришлось добавить отдельный [сервис](kubernetes/manifests/grafana-service.yaml) для работы с 3000 портом.
+С *grafana* возникли небольште трудности, пришлось добавить отдельный [сервис](kubernetes/manifests/grafana-service.yaml) для работы с пакетом по 3000 порту.
 
 Итоговый список сервисов.</br>
 ![list](images/Task_4_4.png)</br>

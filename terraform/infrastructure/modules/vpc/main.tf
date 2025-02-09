@@ -20,40 +20,40 @@ resource "aws_internet_gateway" "igw_4dd" {
 
 # Публичные подсети
 resource "aws_subnet" "public_a_4dd" {
-  vpc_id            = aws_vpc.main_4dd.id
-  cidr_block        = "10.10.10.0/24"
-  availability_zone = local.zone1
+  vpc_id                  = aws_vpc.main_4dd.id
+  cidr_block              = "10.10.10.0/24"
+  availability_zone       = local.zone1
   map_public_ip_on_launch = true
 
   tags = {
-    "Name" = "${local.env}-public-${local.zone1}"
-    "kubernetes.io/role/elb" = "1"
+    "Name"                                                 = "${local.env}-public-${local.zone1}"
+    "kubernetes.io/role/elb"                               = "1"
     "kubernetes.io/cluster/${local.env}-${local.eks_name}" = "owned"
   }
 }
 
 resource "aws_subnet" "public_b_4dd" {
-  vpc_id            = aws_vpc.main_4dd.id
-  cidr_block        = "10.10.11.0/24"
-  availability_zone = local.zone2
+  vpc_id                  = aws_vpc.main_4dd.id
+  cidr_block              = "10.10.11.0/24"
+  availability_zone       = local.zone2
   map_public_ip_on_launch = true
 
   tags = {
-    "Name" = "${local.env}-public-${local.zone2}"
-    "kubernetes.io/role/elb" = "1"
+    "Name"                                                 = "${local.env}-public-${local.zone2}"
+    "kubernetes.io/role/elb"                               = "1"
     "kubernetes.io/cluster/${local.env}-${local.eks_name}" = "owned"
   }
 }
 
 resource "aws_subnet" "public_c_4dd" {
-  vpc_id            = aws_vpc.main_4dd.id
-  cidr_block        = "10.10.12.0/24"
-  availability_zone = local.zone3
+  vpc_id                  = aws_vpc.main_4dd.id
+  cidr_block              = "10.10.12.0/24"
+  availability_zone       = local.zone3
   map_public_ip_on_launch = true
 
   tags = {
-    "Name" = "${local.env}-public-${local.zone3}"
-    "kubernetes.io/role/elb" = "1"
+    "Name"                                                 = "${local.env}-public-${local.zone3}"
+    "kubernetes.io/role/elb"                               = "1"
     "kubernetes.io/cluster/${local.env}-${local.eks_name}" = "owned"
   }
 }
@@ -65,8 +65,8 @@ resource "aws_subnet" "private_a_4dd" {
   availability_zone = local.zone1
 
   tags = {
-    "Name" = "${local.env}-private-${local.zone1}"
-    "kubernetes.io/role/internal-elb" = "1"
+    "Name"                                                 = "${local.env}-private-${local.zone1}"
+    "kubernetes.io/role/internal-elb"                      = "1"
     "kubernetes.io/cluster/${local.env}-${local.eks_name}" = "owned"
   }
 }
@@ -77,8 +77,8 @@ resource "aws_subnet" "private_b_4dd" {
   availability_zone = local.zone2
 
   tags = {
-    "Name" = "${local.env}-private-${local.zone2}"
-    "kubernetes.io/role/internal-elb" = "1"
+    "Name"                                                 = "${local.env}-private-${local.zone2}"
+    "kubernetes.io/role/internal-elb"                      = "1"
     "kubernetes.io/cluster/${local.env}-${local.eks_name}" = "owned"
   }
 }
@@ -89,8 +89,8 @@ resource "aws_subnet" "private_c_4dd" {
   availability_zone = local.zone3
 
   tags = {
-    "Name" = "${local.env}-private-${local.zone3}"
-    "kubernetes.io/role/internal-elb" = "1"
+    "Name"                                                 = "${local.env}-private-${local.zone3}"
+    "kubernetes.io/role/internal-elb"                      = "1"
     "kubernetes.io/cluster/${local.env}-${local.eks_name}" = "owned"
   }
 }
@@ -210,3 +210,54 @@ resource "aws_security_group" "default_4dd" {
     Name = "MySecurityGroup"
   }
 }
+
+# # Оптимизированный вариант с использованием циклов.
+# # Некогда было пробовать.
+# variable "azs" {
+#   description = "Список Availability Zones"
+#   type        = list(string)
+#   default     = ["eu-central-1a", "eu-central-1b", "eu-central-1c"]
+# }
+
+# variable "public_subnets" {
+#   description = "CIDR для публичных подсетей"
+#   type        = list(string)
+#   default     = ["10.10.10.0/24", "10.10.11.0/24", "10.10.12.0/24"]
+# }
+
+# variable "private_subnets" {
+#   description = "CIDR для приватных подсетей"
+#   type        = list(string)
+#   default     = ["10.10.20.0/24", "10.10.21.0/24", "10.10.22.0/24"]
+# }
+
+# # Публичные подсети
+# resource "aws_subnet" "public" {
+#   for_each = { for idx, cidr in var.public_subnets : idx => cidr }
+
+#   vpc_id            = aws_vpc.main_4dd.id
+#   cidr_block        = each.value
+#   availability_zone = var.azs[each.key]
+#   map_public_ip_on_launch = true
+
+#   tags = {
+#     "Name" = "${local.env}-public-${var.azs[each.key]}"
+#     "kubernetes.io/role/elb" = "1"
+#     "kubernetes.io/cluster/${local.env}-${local.eks_name}" = "owned"
+#   }
+# }
+
+# # Приватные подсети
+# resource "aws_subnet" "private" {
+#   for_each = { for idx, cidr in var.private_subnets : idx => cidr }
+
+#   vpc_id            = aws_vpc.main_4dd.id
+#   cidr_block        = each.value
+#   availability_zone = var.azs[each.key]
+
+#   tags = {
+#     "Name" = "${local.env}-private-${var.azs[each.key]}"
+#     "kubernetes.io/role/internal-elb" = "1"
+#     "kubernetes.io/cluster/${local.env}-${local.eks_name}" = "owned"
+#   }
+# }
