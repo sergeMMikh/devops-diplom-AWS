@@ -1,0 +1,55 @@
+REGION="eu-central-1"
+
+
+aws elb describe-load-balancers --region $REGION
+aws elbv2 describe-load-balancers --region $REGION
+aws ec2 describe-volumes --query "Volumes[*].[VolumeId,State,Size]" --region $REGION
+aws ec2 describe-nat-gateways --query "NatGateways[*].{ID:NatGatewayId,State:State}" --region $REGION
+
+
+
+
+# Получаем список всех регионов и разделяем на строки
+$regions = aws ec2 describe-regions --query "Regions[*].RegionName" --output text
+$regionsArray = $regions -split "\s+"
+
+foreach ($region in $regionsArray) {
+    Write-Host "🔎 Проверяем регион: $region" -ForegroundColor Cyan
+
+    # EC2 Instances
+    Write-Host "EC2 Instances:"
+    aws ec2 describe-instances --region $region --query "Reservations[*].Instances[*].[InstanceId, State.Name, InstanceType, PublicIpAddress]" --output table
+
+    # EKS Clusters
+    Write-Host "EKS Clusters:"
+    aws eks list-clusters --region $region
+
+    # RDS Databases
+    Write-Host "RDS Databases:"
+    aws rds describe-db-instances --region $region --query "DBInstances[*].[DBInstanceIdentifier,DBInstanceStatus]" --output table
+
+    # VPC
+    Write-Host "VPCs:"
+    aws ec2 describe-vpcs --region $region --query "Vpcs[*].VpcId" --output table
+
+    # CloudFormation Stacks
+    Write-Host "CloudFormation Stacks:"
+    aws cloudformation list-stacks --region $region --query "StackSummaries[*].[StackName, StackStatus]" --output table
+
+    # Lambda Functions
+    Write-Host "Lambda Functions:"
+    aws lambda list-functions --region $region --query "Functions[*].[FunctionName]" --output table
+
+    Write-Host "==========================================" -ForegroundColor Green
+}
+
+
+$startDate = (Get-Date).AddDays(-7).ToString("yyyy-MM-dd")
+$endDate = (Get-Date).ToString("yyyy-MM-dd")
+
+aws ce get-cost-and-usage --time-period Start=$startDate,End=$endDate --granularity DAILY --metrics "BlendedCost" --group-by Type=DIMENSION,Key=SERVICE --output table
+
+
+
+
+aws ec2 describe-nat-gateways --query "NatGateways[*].{ID:NatGatewayId,State:State}" --region us-east-1

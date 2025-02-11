@@ -21,6 +21,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "backend_dd_sse" {
   }
 }
 
+# Конфигурайия доступа к ресурсу.
 resource "aws_s3_bucket_public_access_block" "backend_dd_block" {
   bucket = aws_s3_bucket.backend_dd.id
 
