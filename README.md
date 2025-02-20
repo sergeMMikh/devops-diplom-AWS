@@ -1,268 +1,162 @@
-# Дипломный практикум в Yandex.Cloud - Сергей Михалёв.
+# **Diploma Practicum in AWS - Sergey Mikhalev**
 
-## Цели:
+## **Goals:**
 
-1. Подготовить облачную инфраструктуру на базе облачного провайдера Яндекс.Облако.
-2. Запустить и сконфигурировать Kubernetes кластер.
-3. Установить и настроить систему мониторинга.
-4. Настроить и автоматизировать сборку тестового приложения с использованием Docker-контейнеров.
-5. Настроить CI для автоматической сборки и тестирования.
-6. Настроить CD для автоматического развёртывания приложения.
-
----
-## Этапы выполнения:
-
-
-### Создание облачной инфраструктуры
-
-Для начала необходимо подготовить облачную инфраструктуру в ЯО при помощи [Terraform](https://www.terraform.io/).
-
-Особенности выполнения:
-
-- Бюджет купона ограничен, что следует иметь в виду при проектировании инфраструктуры и использовании ресурсов;
-Для облачного k8s используйте региональный мастер(неотказоустойчивый). Для self-hosted k8s минимизируйте ресурсы ВМ и долю ЦПУ. В обоих вариантах используйте прерываемые ВМ для worker nodes.
-
-Предварительная подготовка к установке и запуску Kubernetes кластера.
-
-1. Создайте сервисный аккаунт, который будет в дальнейшем использоваться Terraform для работы с инфраструктурой с необходимыми и достаточными правами. Не стоит использовать права суперпользователя
-2. Подготовьте [backend](https://www.terraform.io/docs/language/settings/backends/index.html) для Terraform:  
-   а. Рекомендуемый вариант: S3 bucket в созданном ЯО аккаунте(создание бакета через TF)
-   б. Альтернативный вариант:  [Terraform Cloud](https://app.terraform.io/)
-3. Создайте конфигурацию Terrafrom, используя созданный бакет ранее как бекенд для хранения стейт файла. Конфигурации Terraform для создания сервисного аккаунта и бакета и основной инфраструктуры следует сохранить в разных папках.
-4. Создайте VPC с подсетями в разных зонах доступности.
-5. Убедитесь, что теперь вы можете выполнить команды `terraform destroy` и `terraform apply` без дополнительных ручных действий.
-6. В случае использования [Terraform Cloud](https://app.terraform.io/) в качестве [backend](https://www.terraform.io/docs/language/settings/backends/index.html) убедитесь, что применение изменений успешно проходит, используя web-интерфейс Terraform cloud.
-
-Ожидаемые результаты:
-
-1. Terraform сконфигурирован и создание инфраструктуры посредством Terraform возможно без дополнительных ручных действий, стейт основной конфигурации сохраняется в бакете или Terraform Cloud
-2. Полученная конфигурация инфраструктуры является предварительной, поэтому в ходе дальнейшего выполнения задания возможны изменения.
+1. Prepare a cloud infrastructure based on AWS.
+2. Deploy and configure a Kubernetes cluster.
+3. Install and configure a monitoring system.
+4. Configure and automate the build of a test application using Docker containers.
+5. Set up CI for automatic building and testing.
+6. Set up CD for automatic application deployment.
 
 ---
-**Решение**
 
-Согласно требованию декомпозиции проекта создал деректории:
-- [bootstrap](terraform/bootstrap) для размещения ключевых ресурсов, без которых не сможет работать остальная инфраструктура и которые должны разворачиваться в первую очередь. После выполнения bootstrap может больше не изменяться (или меняться очень редко): 
-   - [iam](terraform/bootstrap/modules/iam/)- модуль для натсройки сервисной роли 
-   - [s3](terraform/bootstrap/modules/s3/)- модуль настройки базового backend хранилища. 
- 
-- [infrastructure](terraform/infrastructure) для размещения остальных модулей:
-   - [ec2](terraform/infrastructure/modules/ec2/)- модуль инстансов
-   - [vpc](terraform/infrastructure/modules/vpc/)- сети
-   - [sequrity_group](terraform/infrastructure/modules/security_group/)- настройка сетевого взаимодеёствия инстансов.
-   - [eks](terraform\infrastructure\modules\eks)- Elastic Kubernetes Service- альтернативное решение для развёртки кластера.
-   - [load_balancer](terraform\infrastructure\modules\load_balancer)- балансировщик нагрузки кластера.
+## **Implementation Steps:**
 
-При помощи записи *backend "s3"* в файле [*backend.tf*](terraform/infrastructure/backend.tf) настроил сохранение *terraform.tfstate* в s3 bucket.</br>
-![Запись terraform.tfstate в s3 bucket](images/Task_1_1.png)
+### **Creating Cloud Infrastructure**
 
-Сргоасно 6-му пункту задания используя web-интерфейс AWS убедился что все изменения `terraform destroy` и `terraform apply` проходят успешно.</br>
-Карта VPC с тремя разными зонами доступности. Использую только один NAT в целях экономии.</br>
-![VPC](images/Task_1_2.png)</br>
-Сервисные роли *staging-diplom-eks-nodes* и *staging-diplom-eks-cluster*</br>
-![instances](images/Task_1_4.png)</br>
+To begin, prepare the cloud infrastructure in AWS using [Terraform](https://www.terraform.io/).
 
----
-### Создание Kubernetes кластера
+#### **Execution Details:**
 
-На этом этапе необходимо создать [Kubernetes](https://kubernetes.io/ru/docs/concepts/overview/what-is-kubernetes/) кластер на базе предварительно созданной инфраструктуры.   Требуется обеспечить доступ к ресурсам из Интернета.
+- The AWS budget is limited, so keep this in mind when designing infrastructure and using resources.
+- For self-hosted Kubernetes, minimize VM resources and CPU allocation. Use **spot instances** for worker nodes in both cloud and self-hosted options.
 
-Это можно сделать двумя способами:
+#### **Preliminary Setup for Kubernetes Cluster Deployment:**
 
-1. Рекомендуемый вариант: самостоятельная установка Kubernetes кластера.  
-   а. При помощи Terraform подготовить как минимум 3 виртуальных машины Compute Cloud для создания Kubernetes-кластера. Тип виртуальной машины следует выбрать самостоятельно с учётом требовании к производительности и стоимости. Если в дальнейшем поймете, что необходимо сменить тип инстанса, используйте Terraform для внесения изменений.  
-   б. Подготовить [ansible](https://www.ansible.com/) конфигурации, можно воспользоваться, например [Kubespray](https://kubernetes.io/docs/setup/production-environment/tools/kubespray/)  
-   в. Задеплоить Kubernetes на подготовленные ранее инстансы, в случае нехватки каких-либо ресурсов вы всегда можете создать их при помощи Terraform.
-2. Альтернативный вариант: воспользуйтесь сервисом [Yandex Managed Service for Kubernetes](https://cloud.yandex.ru/services/managed-kubernetes)  
-  а. С помощью terraform resource для [kubernetes](https://registry.terraform.io/providers/yandex-cloud/yandex/latest/docs/resources/kubernetes_cluster) создать **региональный** мастер kubernetes с размещением нод в разных 3 подсетях      
-  б. С помощью terraform resource для [kubernetes node group](https://registry.terraform.io/providers/yandex-cloud/yandex/latest/docs/resources/kubernetes_node_group)
-  
-Ожидаемый результат:
+1. Create a service account for Terraform to manage infrastructure with necessary permissions (avoid superuser rights).
+2. Prepare a [backend](https://www.terraform.io/docs/language/settings/backends/index.html) for Terraform:
+   - **Recommended:** S3 bucket in AWS (create via Terraform)
+   - **Alternative:** [Terraform Cloud](https://app.terraform.io/)
+3. Configure Terraform to use the created bucket as a backend for state storage.
+4. Create a VPC with subnets in different availability zones.
+5. Ensure that `terraform destroy` and `terraform apply` can be executed without manual intervention.
+6. If using [Terraform Cloud](https://app.terraform.io/), verify that changes apply successfully via the web interface.
 
-1. Работоспособный Kubernetes кластер.
-2. В файле `~/.kube/config` находятся данные для доступа к кластеру.
-3. Команда `kubectl get pods --all-namespaces` отрабатывает без ошибок.
+#### **Expected Results:**
 
-**Решение**
+1. Terraform is configured, allowing infrastructure deployment without manual steps, and the state file is stored in S3 or Terraform Cloud.
+2. The initial infrastructure configuration is ready, but changes may be required during further implementation.
 
-*kubespray*
-
-В соответствии с рекомендациями задания я пробовал использовать для поднятия кластера ansible с пакетом *kubespray*. К сожалею, по независящим от меня причинам, полученный кластер оказался неустойчив, и я решил что он непригоден для следующих этапов дипломной работы. Эту ситуацию я описал в отдельной ветке *kubespray* в [README.md](https://github.com/sergeMMikh/devops-diplom-AWS/blob/kubespray/README.md). Было решено воспользоваться вторым предложенным способом установки кластера- специализированными ресурсами облачного провайдера.
-
-
-*EKS*
-
-AWS предоставляет решение *Elastic Kubernetes Service* его я решил использовтаь далее.
-
-В модуле [*eks*](terraform/infrastructure/modules/eks/) есть полное описание этого сервиса. Учитывая предыдущий опыт я не стал использовтаь самый слабый (а значит- дешёвый) тип инстанса. Для узлов я выбрал стратегию "меньше нодов, больше мощность". Что бы следовать требованиям задания я оставил возможность повышения количсвта нод до 3 в случае пиковой нагрузки:
-
-```
-capacity_type  = "SPOT"
-  instance_types = ["t3.large"]
-
-  scaling_config {
-    desired_size = 1
-    max_size     = 3
-    min_size     = 1
-  }
-```
-
-В результате запуска terraform поднялся кластер</br>
-![instances](images/Task_2_2_1.png)</br>
-
-В качестке ноды поднялась виртуальная машина типа *"t3.large"* в рамках одной из доступных зон.</br>
-![instances](images/Task_2_2_2.png)</br>
-
-Создалась *Auto Scaling group* в трёх подсетях в трёх зонах доступности </br>
-![instances](images/Task_2_2_3.png)</br>
-![instances](images/Task_2_2_4.png)</br>
-
-Произвёл первоначальную настройку *aws eks cli* для работы с ресурсами облачного провайдера.</br>
-![instances](images/Task_2_2_5.png)</br>
-
+![Terraform S3 Backend](images/Task_1_1.png)
 
 ---
-### Создание тестового приложения
 
-Для перехода к следующему этапу необходимо подготовить тестовое приложение, эмулирующее основное приложение разрабатываемое вашей компанией.
+## **Solution**
 
-Способ подготовки:
+To follow the project's decomposition requirement, the following directories were created:
 
-1. Рекомендуемый вариант:  
-   а. Создайте отдельный git репозиторий с простым nginx конфигом, который будет отдавать статические данные.  
-   б. Подготовьте Dockerfile для создания образа приложения.  
-2. Альтернативный вариант:  
-   а. Используйте любой другой код, главное, чтобы был самостоятельно создан Dockerfile.
+- **[bootstrap](terraform/bootstrap):** Contains essential resources for the infrastructure.
+  - **[iam](terraform/bootstrap/modules/iam/)** - IAM role configuration module.
+  - **[s3](terraform/bootstrap/modules/s3/)** - Backend storage setup module.
 
-Ожидаемый результат:
+- **[infrastructure](terraform/infrastructure):** Contains additional modules:
+  - **[ec2](terraform/infrastructure/modules/ec2/)** - EC2 instance configuration.
+  - **[vpc](terraform/infrastructure/modules/vpc/)** - VPC and subnet configuration.
+  - **[security_group](terraform/infrastructure/modules/security_group/)** - Network security setup.
+  - **[eks](terraform/infrastructure/modules/eks/)** - Elastic Kubernetes Service (EKS) configuration.
+  - **[load_balancer](terraform/infrastructure/modules/load_balancer/)** - Load balancer setup.
 
-1. Git репозиторий с тестовым приложением и Dockerfile.
-2. Регистри с собранным docker image. В качестве регистри может быть DockerHub или [Yandex Container Registry](https://cloud.yandex.ru/services/container-registry), созданный также с помощью terraform.
-
-**Решение**
-
-Создал [git репозиторий](https://github.com/sergeMMikh/diplm-test-application) для тестового приложения.
-
-Структура приложения:
-```
-$ tree
-.
-├── Dockerfile
-├── images
-│   └── murz.jpg
-├── index.html
-└── nginx.conf
-```
-
-Собрал Dоcker образ и отправил на DockerHub в [репоиторий](https://hub.docker.com/repository/docker/sergemmikh/test-app/general).</br>
-![Dоcker](images/Task_3_1.png)</br>
+![VPC Configuration](images/Task_1_2.png)
 
 ---
-### Подготовка cистемы мониторинга и деплой приложения
 
-Уже должны быть готовы конфигурации для автоматического создания облачной инфраструктуры и поднятия Kubernetes кластера.  
-Теперь необходимо подготовить конфигурационные файлы для настройки нашего Kubernetes кластера.
+### **Kubernetes Cluster Deployment**
 
-Цель:
-1. Задеплоить в кластер [prometheus](https://prometheus.io/), [grafana](https://grafana.com/), [alertmanager](https://github.com/prometheus/alertmanager), [экспортер](https://github.com/prometheus/node_exporter) основных метрик Kubernetes.
-2. Задеплоить тестовое приложение, например, [nginx](https://www.nginx.com/) сервер отдающий статическую страницу.
+The goal is to create a [Kubernetes](https://kubernetes.io/) cluster using the pre-configured infrastructure.
 
-Способ выполнения:
-1. Воспользоваться пакетом [kube-prometheus](https://github.com/prometheus-operator/kube-prometheus), который уже включает в себя [Kubernetes оператор](https://operatorhub.io/) для [grafana](https://grafana.com/), [prometheus](https://prometheus.io/), [alertmanager](https://github.com/prometheus/alertmanager) и [node_exporter](https://github.com/prometheus/node_exporter). Альтернативный вариант - использовать набор helm чартов от [bitnami](https://github.com/bitnami/charts/tree/main/bitnami).
+#### **Implementation Options:**
 
-2. Если на первом этапе вы не воспользовались [Terraform Cloud](https://app.terraform.io/), то задеплойте и настройте в кластере [atlantis](https://www.runatlantis.io/) для отслеживания изменений инфраструктуры. Альтернативный вариант 3 задания: вместо Terraform Cloud или atlantis настройте на автоматический запуск и применение конфигурации terraform из вашего git-репозитория в выбранной вами CI-CD системе при любом комите в main ветку. Предоставьте скриншоты работы пайплайна из CI/CD системы.
+1. **Recommended Option:** Self-hosted Kubernetes cluster setup.
+   - Use Terraform to create at least **three** virtual machines for the cluster.
+   - Prepare [Ansible](https://www.ansible.com/) configurations using [Kubespray](https://kubernetes.io/docs/setup/production-environment/tools/kubespray/).
+   - Deploy Kubernetes on the created instances.
 
-Ожидаемый результат:
-1. Git репозиторий с конфигурационными файлами для настройки Kubernetes.
-2. Http доступ на 80 порту к web интерфейсу grafana.
-3. Дашборды в grafana отображающие состояние Kubernetes кластера.
-4. Http доступ на 80 порту к тестовому приложению.
+2. **Alternative Option:** Use [AWS Elastic Kubernetes Service (EKS)](https://aws.amazon.com/eks/).
+   - Create an **EKS cluster** with node groups spread across three availability zones.
 
-**Решение**
+#### **Expected Results:**
 
-Установка сервиса метрик (*metrics-server*) на кластер.</br>
-![metrics-server](images/Task_4_1.png)</br>
+1. A fully operational Kubernetes cluster.
+2. The `~/.kube/config` file contains access credentials.
+3. The command `kubectl get pods --all-namespaces` executes successfully.
 
-используя *helm* установил *prometheus-stack* из *prometheus-community*.</br>
-![prometheus-stack](images/Task_4_2_.png)</br>
-
-Написал [*deployment*](kubernetes/manifests/test-app-deployment.yaml) [*service*](kubernetes/manifests/test-app-service.yaml) для деплоя моего тестового приложения.
-
-С *grafana* возникли небольште трудности, пришлось добавить отдельный [сервис](kubernetes/manifests/grafana-service.yaml) для работы с пакетом по 3000 порту.
-
-Итоговый список сервисов.</br>
-![list](images/Task_4_4.png)</br>
-
-Для проброса сервисов в интерернет написал [*ingfess*](kubernetes/manifests/aws-alb-ingress.yaml). Получил внешнее DNS имя.</br>
-![ingfess](images/Task_4_5.png)</br> 
-
-*load balancer* в трёх зонах доступности.</br>
-![ingfess](images/Task_4_8.png)</br> 
-
-Сделал соответсвующие А-записи для своего домена *crystalpuzzles.pt*.</br>
-![a](images/Task_4_6_1.png)</br> </br>
-![a](images/Task_4_6_2.png)</br> 
-
-В итоге сервисы доступны по адресам:
-- тестовое приложение: *http://app.crystalpuzzles.pt/app*
-- grafana: *http://grafana.crystalpuzzles.pt/*
-- prometheus: *http://prometheus.crystalpuzzles.pt/*
-</br>
-
-![app](images/Task_4_7_1.png)</br> 
-![grafana](images/Task_4_7_2.png)</br> 
-![prometheus](images/Task_4_7_3.png)</br> 
-
+![EKS Cluster](images/Task_2_2_1.png)
 
 ---
-### Установка и настройка CI/CD
 
-Осталось настроить ci/cd систему для автоматической сборки docker image и деплоя приложения при изменении кода.
+### **Test Application Deployment**
 
-Цель:
+To proceed with the next step, a test application simulating a production application is required.
 
-1. Автоматическая сборка docker образа при коммите в репозиторий с тестовым приложением.
-2. Автоматический деплой нового docker образа.
+#### **Implementation:**
 
-Можно использовать [teamcity](https://www.jetbrains.com/ru-ru/teamcity/), [jenkins](https://www.jenkins.io/), [GitLab CI](https://about.gitlab.com/stages-devops-lifecycle/continuous-integration/) или GitHub Actions.
+1. **Recommended Approach:**
+   - Create a **separate Git repository** with an **Nginx-based** static web server.
+   - Prepare a **Dockerfile** for building the application image.
 
-Ожидаемый результат:
+2. **Alternative Approach:**
+   - Use any other code, ensuring it includes a **Dockerfile**.
 
-1. Интерфейс ci/cd сервиса доступен по http.
-2. При любом коммите в репозиторие с тестовым приложением происходит сборка и отправка в регистр Docker образа.
-3. При создании тега (например, v1.0.0) происходит сборка и отправка с соответствующим label в регистри, а также деплой соответствующего Docker образа в кластер Kubernetes.
+#### **Expected Results:**
 
-**Решение**
+1. A **Git repository** with the test application and Dockerfile.
+2. A **Docker registry** with the built image (DockerHub or AWS ECR).
 
-В [репозитории с тестовым приложением](https://github.com/sergeMMikh/diplm-test-application) создал папку [*.github/workflows*](https://github.com/sergeMMikh/diplm-test-application/tree/main/.github/workflows) с описание шагов:
-- *integration*- автоматическая сборка образа приложения и его отправка в репозиторий [DockerHub](https://hub.docker.com) *sergemmikh/test-app*
-- *deployment*: обновление образа в поде *test-app* моего кластера *diplom-claster*
+#### **Solution:**
 
-Согласно задани, обновление должно происходить только при появлении нового *tag* в репозитории. За это отвечает директива
-```
-on:
-  push:
-      tags:        
-      - '*'
-```
-Процесс выполнения pipline:</br> 
-![prometheus](images/Task_5_3.png)</br>
+A test application repository was created: [GitHub](https://github.com/sergeMMikh/diplm-test-application).
 
-История обновления development до и после работы pipline:</br> 
-![prometheus](images/Task_5_2.png)</br>
-
+![Docker Image](images/Task_3_1.png)
 
 ---
-## Итог
 
-1. [Репозиторий с конфигурационными файлами Terraform](terraform).
+### **Monitoring System Deployment**
 
-2. Процесс выполнения pipline:</br> 
-![prometheus](images/Task_5_3.png)
-3. Репозиторий с конфигурацией ansible, если был выбран способ создания Kubernetes кластера при помощи отсутствует. Полное описание процесса и причин отказа от kubespray можно найти в [README.md](https://github.com/sergeMMikh/devops-diplom-AWS/blob/kubespray/README.md)
-4. [Репозиторий с Dockerfile](https://hub.docker.com/repository/docker/sergemmikh/test-app/general) тестового приложения и [ссылка на собранный docker image](https://hub.docker.com/repository/docker/sergemmikh/test-app/tags/v1.0.3/sha256-d54a08b6a6cedb32799d2d20b9f2eda74f0e3a8fa36dc1f562f960273537d966).
-5. [Репозиторий с конфигурацией Kubernetes кластера](kubernetes/manifests).
-6. Ссылки на [тестовое приложение](http://app.crystalpuzzles.pt/app) и [веб интерфейс Grafana](http://grafana.crystalpuzzles.pt/). Данные доступа:
-- user: admin
-- password: prom-operator.
-7. Все репозитории рекомендуется хранятся на одном ресурсе [github](https://github.com/sergeMMikh).
+#### **Goal:**
+
+1. Deploy **Prometheus**, **Grafana**, **Alertmanager**, and **Node Exporter**.
+2. Deploy the test application (Nginx static server).
+
+#### **Implementation:**
+
+- Installed **metrics-server** on the cluster.
+- Used **Helm** to deploy **prometheus-stack**.
+- Configured **Ingress** for external access.
+- Configured **A-records** for domain *crystalpuzzles.pt*.
+
+#### **Solution:**
+
+![Monitoring Stack](images/Task_4_2_.png)
+
+- Test Application: [http://app.crystalpuzzles.pt/app](http://app.crystalpuzzles.pt/app)
+- Grafana: [http://grafana.crystalpuzzles.pt/](http://grafana.crystalpuzzles.pt/)
+- Prometheus: [http://prometheus.crystalpuzzles.pt/](http://prometheus.crystalpuzzles.pt/)
+
+---
+
+### **CI/CD Setup**
+
+#### **Goal:**
+
+1. Automatically build and push Docker images upon commits.
+2. Automatically deploy updated images.
+
+#### **Solution:**
+
+In the [test application repository](https://github.com/sergeMMikh/diplm-test-application), a [GitHub Actions](https://github.com/features/actions) workflow was created under `.github/workflows`:
+
+![CI/CD Pipeline](images/Task_5_3.png)
+
+---
+
+### **Final Results**
+
+1. [Terraform Repository](terraform)
+2. Fully automated CI/CD pipeline.
+3. [DockerHub Repository](https://hub.docker.com/repository/docker/sergemmikh/test-app/general)
+4. [Kubernetes Configuration Repository](kubernetes/manifests)
+5. Deployed Services:
+   - **Test Application:** [http://app.crystalpuzzles.pt/app](http://app.crystalpuzzles.pt/app)
+   - **Grafana:** [http://grafana.crystalpuzzles.pt/](http://grafana.crystalpuzzles.pt/) (admin / prom-operator)
+
